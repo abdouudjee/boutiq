@@ -127,7 +127,7 @@
 </div>
 <!-- overview with charts i'll make it later -->
 <div></div>
-<div class="flex w-full items-center justify-start gap-2 py-4">
+<div class="flex w-full items-start justify-start gap-2 py-4">
 	<div
 		class="flex h-fit w-1/2 flex-col shadow-sm items-start justify-start gap-2 rounded-xl border-2 border-gray-300 px-4 py-5"
 	>
@@ -135,6 +135,34 @@
 		<p class="text-gray-400">Latest orders processed</p>
 		<ul class="w-full">
 			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
+				<div class="flex h-full items-center justify-start gap-2">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
+					<div class="flex flex-col items-start justify-center">
+						<p class="leading-4 text-black">user name here</p>
+						<p class="leading-4 text-gray-400">email here</p>
+					</div>
+				</div>
+				<p class="text-lg font-semibold">555dzd</p>
+			</li>
+			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
+				<div class="flex h-full items-center justify-start gap-2">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
+					<div class="flex flex-col items-start justify-center">
+						<p class="leading-4 text-black">user name here</p>
+						<p class="leading-4 text-gray-400">email here</p>
+					</div>
+				</div>
+				<p class="text-lg font-semibold">555dzd</p>
+			</li><li class="flex h-15 w-full items-center justify-between px-4 py-2">
+				<div class="flex h-full items-center justify-start gap-2">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
+					<div class="flex flex-col items-start justify-center">
+						<p class="leading-4 text-black">user name here</p>
+						<p class="leading-4 text-gray-400">email here</p>
+					</div>
+				</div>
+				<p class="text-lg font-semibold">555dzd</p>
+			</li><li class="flex h-15 w-full items-center justify-between px-4 py-2">
 				<div class="flex h-full items-center justify-start gap-2">
 					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
 					<div class="flex flex-col items-start justify-center">
@@ -154,6 +182,34 @@
 		<p class="text-gray-400">Best selling products this month.</p>
 		<ul class="w-full">
 			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
+				<div class="flex h-full items-center justify-start gap-2">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
+					<div class="flex flex-col items-start justify-center">
+						<p class="leading-4 text-black">product name here</p>
+						<p class="leading-4 text-gray-400">category here</p>
+					</div>
+				</div>
+				<p class="text-lg font-semibold">555dzd</p>
+			</li>
+			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
+				<div class="flex h-full items-center justify-start gap-2">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
+					<div class="flex flex-col items-start justify-center">
+						<p class="leading-4 text-black">product name here</p>
+						<p class="leading-4 text-gray-400">category here</p>
+					</div>
+				</div>
+				<p class="text-lg font-semibold">555dzd</p>
+			</li><li class="flex h-15 w-full items-center justify-between px-4 py-2">
+				<div class="flex h-full items-center justify-start gap-2">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
+					<div class="flex flex-col items-start justify-center">
+						<p class="leading-4 text-black">product name here</p>
+						<p class="leading-4 text-gray-400">category here</p>
+					</div>
+				</div>
+				<p class="text-lg font-semibold">555dzd</p>
+			</li><li class="flex h-15 w-full items-center justify-between px-4 py-2">
 				<div class="flex h-full items-center justify-start gap-2">
 					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
 					<div class="flex flex-col items-start justify-center">

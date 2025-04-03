@@ -71,7 +71,7 @@
 </nav>
 <div class="flex sticky top-20">
 	<aside 
-		class="sticky top-20 left-0 flex h-[calc(100vh-5rem)] overflow-auto max-w-70 min-w-55 flex-col items-center justify-start border-r-2 border-r-gray-300 bg-white px-5 py-10"
+		class="md:flex    sticky top-20 left-0 hidden h-[calc(100vh-5rem)] overflow-auto max-w-70 min-w-55 flex-col items-center justify-start border-r-2 border-r-gray-300 bg-white px-5 py-10"
 	>
 		<ul class="flex flex-col items-start justify-between gap-5">
 			<li class="flex items-center justify-start gap-2">

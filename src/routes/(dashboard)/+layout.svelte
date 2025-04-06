@@ -4,7 +4,7 @@
 </script>
 
 <nav
-	class="sticky z-10 bg-white top-0 flex h-20 w-full items-center justify-between border-b-2 border-b-gray-300 px-5"
+	class="sticky top-0 z-20 flex h-20 w-full items-center justify-between border-b-2 border-b-gray-300 bg-white px-5"
 >
 	<img src="Logo.png" alt="" />
 
@@ -69,9 +69,9 @@
 		<img src="" alt="" class="h-10 w-10 rounded-full" />
 	</div>
 </nav>
-<div class="flex sticky top-20">
-	<aside 
-		class="md:flex    sticky top-20 left-0 hidden h-[calc(100vh-5rem)] overflow-auto max-w-70 min-w-55 flex-col items-center justify-start border-r-2 border-r-gray-300 bg-white px-5 py-10"
+<div class="relative flex">
+	<aside
+		class="sticky top-20 left-0 hidden h-[calc(100vh-5rem)] max-w-70 min-w-55 flex-col items-center justify-start overflow-auto border-r-2 border-r-gray-300 bg-white px-5 py-10 md:flex"
 	>
 		<ul class="flex flex-col items-start justify-between gap-5">
 			<li class="flex items-center justify-start gap-2">
@@ -238,7 +238,14 @@
 			</li>
 		</ul>
 	</aside>
-	<main class="w-full h-fit flex-col items-center justify-start overflow-y-auto px-8">
+	<main class="    h-fit w-full flex-col items-center justify-start overflow-y-auto px-8">
 		{@render children()}
 	</main>
 </div>
+
+<style>
+	:global(html) {
+		scroll-behavior: smooth;
+		scrollbar-width: none;
+	}
+</style>

@@ -320,9 +320,9 @@
 	<tr>
 		<td class="w-10 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"
 			><img
-				src={company.image || 'placeholder.svg'}
+				src={company.image || '/placeholder.svg'}
 				onerror={() => {
-					this.src = 'placeholder.svg';
+					this.src = '/placeholder.svg';
 				}}
 				alt=""
 				class="style-none h-10 w-10 rounded-lg border-2 border-gray-300 bg-gray-300 object-cover"

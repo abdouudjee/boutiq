@@ -6,9 +6,9 @@
 	<tr>
 		<td class="border-b-2 border-b-gray-300 px-4 py-2">
 			<img
-				src={product.img || 'placeholder.svg'}
+				src={product.img || '/placeholder.svg'}
 				onerror={() => {
-					this.src = 'placeholder.svg';
+					this.src = '/placeholder.svg';
 				}}
 				alt=""
 				class="style-none h-10 w-10 rounded-lg border-2 border-gray-300 bg-gray-300 object-cover"
@@ -61,9 +61,9 @@
 	<tr>
 		<td class="border-b-2 border-b-gray-300 px-4 py-2">
 			<img
-				src={category.img || 'placeholder.svg'}
+				src={category.img || '/placeholder.svg'}
 				onerror={() => {
-					this.src = 'placeholder.svg';
+					this.src = '/placeholder.svg';
 				}}
 				alt=""
 				class="style-none h-10 w-10 rounded-lg border-2 border-gray-300 bg-gray-300 object-cover"

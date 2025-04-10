@@ -6,12 +6,12 @@
 <nav
 	class="sticky top-0 z-20 flex h-20 w-full items-center justify-between border-b-2 border-b-gray-300 bg-white px-5"
 >
-	<img src="Logo.png" alt="" />
+	<img src="/logo.png" alt="" />
 
 	<ul class="flex items-center justify-between gap-5">
 		<li class="">
 			<a
-				href="/dashboard"
+				href="/admin/dashboard"
 				class={[
 					' hover:text-black',
 					page.url.pathname.includes('dashboard') ? 'font-medium text-black' : 'text-gray-500'
@@ -22,7 +22,7 @@
 		</li>
 		<li class="">
 			<a
-				href="/products"
+				href="/admin/products"
 				class={[
 					' hover:text-black',
 					page.url.pathname.includes('products') ? 'font-medium text-black' : 'text-gray-500'
@@ -33,7 +33,7 @@
 		</li>
 		<li class="">
 			<a
-				href="/categories"
+				href="/admin/categories"
 				class={[
 					' hover:text-black',
 					page.url.pathname.includes('categories') ? 'font-medium text-black' : 'text-gray-500'
@@ -44,7 +44,7 @@
 		</li>
 		<li class="">
 			<a
-				href="/orders"
+				href="/admin/orders"
 				class={[
 					' hover:text-black',
 					page.url.pathname.includes('orders') ? 'font-medium text-black' : 'text-gray-500'
@@ -55,7 +55,7 @@
 		</li>
 		<li class="">
 			<a
-				href="/customers"
+				href="/admin/customers"
 				class={[
 					' hover:text-black',
 					page.url.pathname.includes('customers') ? 'font-medium text-black' : 'text-gray-500'
@@ -94,7 +94,7 @@
 					</svg>
 
 					<a
-						href="/dashboard"
+						href="/admin/dashboard"
 						class={page.url.pathname.includes('dashboard')
 							? 'font-medium text-black '
 							: 'text-gray-500'}
@@ -126,7 +126,7 @@
 					</svg>
 
 					<a
-						href="/products"
+						href="/admin/products"
 						class={[
 							' hover:text-black',
 							page.url.pathname.includes('products') ? 'font-medium text-black' : 'text-gray-500'
@@ -159,7 +159,7 @@
 						></path></svg
 					>
 					<a
-						href="/categories"
+						href="/admin/categories"
 						class={[
 							' hover:text-black',
 							page.url.pathname.includes('categories') ? 'font-medium text-black' : 'text-gray-500'
@@ -189,7 +189,7 @@
 						></path></svg
 					>
 					<a
-						href="/orders"
+						href="/admin/orders"
 						class={[
 							' hover:text-black',
 							page.url.pathname.includes('orders') ? 'font-medium text-black' : 'text-gray-500'
@@ -220,7 +220,7 @@
 						></path></svg
 					>
 					<a
-						href="/customers"
+						href="/admin/customers"
 						class={[
 							' hover:text-black',
 							page.url.pathname.includes('customers') ? 'font-medium text-black' : 'text-gray-500'
@@ -250,7 +250,7 @@
 						></path><circle cx="12" cy="12" r="3"></circle></svg
 					>
 					<a
-						href="/settings"
+						href="/admin/settings"
 						class={[
 							' hover:text-black',
 							page.url.pathname.includes('settings') ? 'font-medium text-black' : 'text-gray-500'

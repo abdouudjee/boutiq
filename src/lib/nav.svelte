@@ -95,7 +95,7 @@
 <div class="border-gray flex h-18 items-center border-b-2 px-25 justify-between">
 	<div class="flex h-8.5 items-center gap-8">
 		<!-- logo placeholder -->
-		<div><img src="Logo.png" alt="" /></div>
+		<div><img src="logo.png" alt="" /></div>
 		<div class="flex gap-1">
 			<!-- svelte-ignore a11y_consider_explicit_label -->
 			<!-- svelte-ignore a11y_autofocus -->

@@ -1,4 +1,7 @@
 <script>
+	import Cell from '$lib/cell.svelte';
+	import { supabase } from '$lib/index.js';
+	import { onMount } from 'svelte';
 	let selected = $state('shipping');
 	let store_desc = $state('');
 	let logo = $state('');
@@ -8,6 +11,12 @@
 		if (store_desc.match(/\s{4,}$/)) {
 			store_desc = store_desc.replace(/\s{4,}$/, '   ');
 		}
+	});
+	let wilayas=$state([]);
+	onMount(async () => {
+		const { data } = await supabase.from('wilayas').select('*').range(0, 9);
+		console.log(data);
+		wilayas=data;
 	});
 </script>
 
@@ -196,55 +205,149 @@
 			</div>
 		</div>
 	{:else if selected == 'shipping'}
-		<div class="h-fit w-full rounded-lg border-2 border-gray-300 px-4 py-2">
-			<p class="text-3xl leading-10 font-medium tracking-wide text-black">shipping</p>
-			<div class="flex w-full flex-col items-start py-4">
-				<label for="">shipping companies</label>
-				<div class="flex flex-col gap-2">
-					<ul>
-						<li class="flex items-center gap-2 px-2 py-2">
-							<img
-								src="placeholder.svg"
-								class="h-10 w-10 rounded-lg border-2 border-gray-300"
-								alt=""
-							/>
-							<p>zr express</p>
-						</li>
-						<li class="flex items-center gap-2 px-2 py-2">
-							<img
-								src="placeholder.svg"
-								class="h-10 w-10 rounded-lg border-2 border-gray-300"
-								alt=""
-							/>
-							<p>zr express</p>
-						</li>
-						<li class="flex items-center gap-2 px-2 py-2">
-							<img
-								src="placeholder.svg"
-								class="h-10 w-10 rounded-lg border-2 border-gray-300"
-								alt=""
-							/>
-							<p>zr express</p>
-						</li>
-					</ul>
-					<button
-						class="flex items-center justify-center rounded-lg border-2 border-gray-300 px-3 py-1 hover:bg-gray-200 active:scale-95"
-						>add new company</button
+		<div
+			class="flex h-fit w-full flex-col items-start justify-start gap-4 rounded-lg border-2 border-gray-300 px-4 py-4"
+		>
+			<div class="flex w-full items-center justify-between gap-4 py-4">
+				<p class="text-3xl leading-10 font-medium tracking-wide text-black">shipping companies</p>
+				<button
+					onclick={() => (form = true)}
+					class="flex items-center justify-center gap-2 rounded-lg bg-black px-4 py-2 font-medium text-white transition duration-200 ease-in-out hover:cursor-pointer hover:bg-gray-800 active:scale-95"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="h-5 w-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg
 					>
-				</div>
+					<p class="hidden lg:block">add a company</p></button
+				>
 			</div>
-			<div class="flex w-full items-center justify-end gap-4 px-4 py-2">
-				<button
-					class="flex cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
-					>reset</button
+			<div class="flex w-full items-center justify-center">
+				<table
+					cellspacing="0"
+					class="w-fit border-separate rounded-t-2xl border-2 border-b-0 border-gray-300 bg-white text-left"
 				>
-				<button
-					class="flex cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
-					>save changes</button
+					<thead class="border-separate rounded-t-2xl">
+						<tr class="rounded-t-2xl border-b-1 border-b-gray-300">
+							<th class="w-10 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">image</th>
+							<th class="border-b-2 border-b-gray-300 px-4 py-2">company </th>
+							<th class="border-b-2 border-b-gray-300 px-4 py-2">default rate</th>
+							<th class="w-50 border-b-2 border-b-gray-300 px-4 py-2">estimated delivery</th>
+							<th class="w-30 border-b-2 border-b-gray-300 px-4 py-2 text-center">status</th>
+							<th class="w-20 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"></th>
+						</tr>
+					</thead>
+					<tbody class="">
+						{@render shippingcompanyrow({
+							name: 'zr express',
+							default_rate: 2000,
+							estimated_delivery: 2,
+							status: 'active'
+						})}
+						{@render shippingcompanyrow({
+							name: 'dhd express',
+							default_rate: 5000,
+							estimated_delivery: 3,
+							status: 'inactive'
+						})}
+						{@render shippingcompanyrow({
+							name: 'yalidin express',
+							default_rate: 10000,
+							estimated_delivery: 5,
+							status: 'active'
+						})}
+						{@render shippingcompanyrow({
+							name: 'lihlih express',
+							default_rate: 15000,
+							estimated_delivery: 7,
+							status: 'inactive'
+						})}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div
+			class="flex h-fit w-full flex-col items-start justify-start gap-4 rounded-lg border-2 border-gray-300 px-4 py-4"
+		>
+			<div class="flex w-full items-center justify-between gap-4 py-4">
+				<p class="text-3xl leading-10 font-medium tracking-wide text-black">shipping prices</p>
+			</div>
+			<div class="flex w-full items-center justify-center">
+				<table
+					cellspacing="0"
+					class="w-fit border-separate rounded-t-2xl border-2 border-b-0 border-gray-300 bg-white text-left"
 				>
+					<thead class="border-separate rounded-t-2xl">
+						<tr class="rounded-t-2xl border-b-1 border-b-gray-300">
+							<th class="w-10 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">code</th>
+							<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">states </th>
+							<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">zr express </th>
+							<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">zr express </th>
+							<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">zr express </th>
+							<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">zr express </th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each wilayas as wilaya, id}
+							<tr class="h-12">
+								<td class="w-10 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"
+									>{('' + (id + 1)).padStart(2, '0')}</td
+								>
+								<td class="w-40 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">{wilaya.name}</td>
+								<Cell value="500" />
+								<td class="w-35 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"></td>
+								<td class="w-35 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">600 dzd</td>
+								<td class="w-35 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">400 dzd</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
 			</div>
 		</div>
 	{:else if selected == 'admins'}
 		admins settings
 	{/if}
 </div>
+
+{#snippet shippingcompanyrow(company)}
+	<tr>
+		<td class="w-10 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"
+			><img
+				src={company.image || 'placeholder.svg'}
+				onerror={() => {
+					this.src = 'placeholder.svg';
+				}}
+				alt=""
+				class="style-none h-10 w-10 rounded-lg border-2 border-gray-300 bg-gray-300 object-cover"
+			/></td
+		>
+		<td class="border-b-2 border-b-gray-300 px-4 py-2">{company.name}</td>
+		<td class="border-b-2 border-b-gray-300 px-4 py-2 font-medium"
+			>{company.default_rate} <span class="text-sm font-normal">DZD</span></td
+		>
+		<td class="w-20 border-b-2 border-b-gray-300 px-4 py-2">{company.estimated_delivery} days</td>
+		<td class="w-30 border-b-2 border-b-gray-300 px-4 py-2 text-center"
+			><p
+				class={[
+					' mx-auto  w-fit rounded-full  px-2  py-1 text-sm font-medium',
+					company.status == 'inactive'
+						? 'border-1 border-red-300 bg-red-200 font-medium  text-red-700'
+						: '',
+					company.status == 'active'
+						? 'border-1 border-green-400  bg-green-200 font-medium text-green-700'
+						: ''
+				]}
+			>
+				{company.status}
+			</p></td
+		>
+		<td class="w-20 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"></td>
+	</tr>
+{/snippet}

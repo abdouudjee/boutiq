@@ -2,7 +2,7 @@
 	import Cell from '$lib/cell.svelte';
 	import { supabase } from '$lib/index.js';
 	import { onMount } from 'svelte';
-	let selected = $state('shipping');
+	let selected = $state('admins');
 	let store_desc = $state('');
 	let logo = $state('');
 	let favicon = $state('');
@@ -12,11 +12,11 @@
 			store_desc = store_desc.replace(/\s{4,}$/, '   ');
 		}
 	});
-	let wilayas=$state([]);
+	let wilayas = $state([]);
 	onMount(async () => {
 		const { data } = await supabase.from('wilayas').select('*').range(0, 9);
 		console.log(data);
-		wilayas=data;
+		wilayas = data;
 	});
 </script>
 
@@ -300,7 +300,9 @@
 								<td class="w-10 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"
 									>{('' + (id + 1)).padStart(2, '0')}</td
 								>
-								<td class="w-40 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">{wilaya.name}</td>
+								<td class="w-40 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"
+									>{wilaya.name}</td
+								>
 								<Cell value="500" />
 								<td class="w-35 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"></td>
 								<td class="w-35 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">600 dzd</td>
@@ -312,7 +314,74 @@
 			</div>
 		</div>
 	{:else if selected == 'admins'}
-		admins settings
+		<div class="h-fit w-full rounded-lg border-2 border-gray-300 px-4 py-2">
+			<div class="flex w-full items-center justify-between gap-4 py-4">
+				<p class="text-3xl leading-10 font-medium tracking-wide text-black">Administrators</p>
+				<button
+					onclick={() => (form = true)}
+					class="flex items-center justify-center gap-2 rounded-lg bg-black px-4 py-2 font-medium text-white transition duration-200 ease-in-out hover:cursor-pointer hover:bg-gray-800 active:scale-95"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="h-5 w-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg
+					>
+					<p class="hidden lg:block">add admin</p></button
+				>
+			</div>
+
+			<table
+				cellspacing="0"
+				class="w-full border-separate rounded-t-2xl border-2 border-b-0 border-gray-300 bg-white text-left"
+			>
+				<thead class="border-separate rounded-t-2xl">
+					<tr class="rounded-t-2xl border-b-1 border-b-gray-300 hover:bg-gray-50">
+						<th class="w-10 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">admin</th>
+						<th class="w-40 border-b-2 border-b-gray-300 px-4 py-2"></th>
+						<th class="w-40 border-b-2 border-b-gray-300 px-4 py-2 text-center">role</th>
+						<th class="w-40 border-b-2 border-b-gray-300 px-4 py-2 text-center">status</th>
+						<th class="w-20 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"></th>
+					</tr>
+				</thead>
+				<tbody class="">
+					{@render adminrow({
+						email: 'example@gmail.com',
+						name: 'hello',
+						role: 'administrator',
+						img: null,
+						status: 'active'
+					})}
+					{@render adminrow({
+						email: 'example@gmail.com',
+						name: 'hello',
+						role: 'manager',
+						img: null,
+						status: 'inactive'
+					})}
+					{@render adminrow({
+						email: 'example@gmail.com',
+						name: 'hello',
+						role: 'owner',
+						img: null,
+						status: 'active'
+					})}
+					{@render adminrow({
+						email: 'example@gmail.com',
+						name: 'hello',
+						role: 'support',
+						img: null,
+						status: 'inactive'
+					})}
+				</tbody>
+			</table>
+		</div>
 	{/if}
 </div>
 
@@ -349,5 +418,88 @@
 			</p></td
 		>
 		<td class="w-20 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"></td>
+	</tr>
+{/snippet}
+
+{#snippet adminrow(admin)}
+	<tr class="hover:bg-gray-50">
+		<td class="w-10 border-b-2 border-b-gray-300 px-4 py-2">
+			<img
+				src={admin.img || '/placeholder.svg'}
+				onerror={() => {
+					this.src = '/placeholder.svg';
+				}}
+				alt=""
+				class="style-none h-10 w-10 rounded-full border-2 border-gray-300 bg-gray-300 object-cover"
+			/></td
+		>
+		<td class="w-40 border-b-2 border-b-gray-300 px-4 py-2 text-left text-sm">
+			<div class="flex flex-col">
+				<p class="text-sm font-medium">
+					{admin.name}
+				</p>
+				<p class="text-sm text-gray-500">
+					{admin.email}
+				</p>
+			</div>
+		</td>
+
+		<td class="w-40 min-w-25 border-b-2 border-b-gray-300 py-2">
+			<p
+				class={[
+					' mx-auto  w-fit rounded-full  px-2  py-1 text-sm font-medium',
+					admin.role == 'owner'
+						? 'border-1 border-purple-400 bg-purple-200 font-medium  text-purple-700'
+						: '',
+					admin.role == 'manager'
+						? 'border-1 border-green-400 bg-green-200  font-medium text-green-700'
+						: '',
+					admin.role == 'administrator'
+						? 'border-1 border-blue-400 bg-blue-200 font-medium  text-blue-700'
+						: '',
+					admin.role == 'support'
+						? 'border-1 border-gray-400 bg-gray-200 font-medium  text-gray-700'
+						: ''
+				]}
+			>
+				{admin.role}
+			</p></td
+		>
+		<td class="w-40 min-w-25 border-b-2 border-b-gray-300 py-2">
+			<p
+				class={[
+					' mx-auto  w-fit rounded-full  px-2  py-1 text-sm font-medium ',
+					admin.status == 'active'
+						? 'border-1 border-green-400 bg-green-200 font-medium text-green-700'
+						: '',
+					admin.status == 'inactive'
+						? 'border-1 border-red-300 bg-red-200 font-medium text-red-700'
+						: ''
+				]}
+			>
+				{admin.status}
+			</p></td
+		>
+		<td class="w-20 border-b-2 border-b-gray-300 px-4 py-2 text-center">
+			<!-- svelte-ignore a11y_consider_explicit_label -->
+			<button class="rounded-lg p-1 hover:bg-gray-200"
+				><svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-ellipsis-icon lucide-ellipsis"
+				>
+					<circle cx="12" cy="12" r="1" />
+					<circle cx="19" cy="12" r="1" />
+					<circle cx="5" cy="12" r="1" />
+				</svg></button
+			></td
+		>
 	</tr>
 {/snippet}

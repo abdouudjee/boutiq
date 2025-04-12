@@ -2,7 +2,10 @@
 	import Cell from '$lib/cell.svelte';
 	import { supabase } from '$lib/index.js';
 	import { onMount } from 'svelte';
-	let selected = $state('admins');
+
+	// selected settings
+	let selected = $state('store');
+	// store form vars
 	let store_desc = $state('');
 	let logo = $state('');
 	let favicon = $state('');
@@ -18,6 +21,17 @@
 		console.log(data);
 		wilayas = data;
 	});
+	// add admin form vars
+	let adminform = $state(false);
+	let menuopen = $state(false);
+	let dropdownvalue = $state(null);
+	let admin_fullname = $state('');
+	let admin_email = $state('');
+	// add shipping company vars
+	let shipping_company_form = $state(false);
+	let shipping_company_name = $state('');
+	let shipping_company_default_rate = $state('');
+	let shipping_company_estimated_time = $state('');
 </script>
 
 <div
@@ -130,7 +144,7 @@
 					<label for="" class="font-medium">Store logo</label>
 					<div class="flex items-center justify-between gap-4 py-4">
 						<img
-							src={logo || 'logo_placeholder.svg'}
+							src={logo || '/logo_placeholder.svg'}
 							alt=""
 							class="h-30 w-30 rounded-xl border-2 border-gray-300 object-fill p-4"
 						/>
@@ -160,7 +174,7 @@
 					<label for="" class="font-medium">favicon</label>
 					<div class="flex items-center justify-between gap-4 py-4">
 						<img
-							src={favicon || 'logo_placeholder.svg'}
+							src={favicon || '/logo_placeholder.svg'}
 							alt=""
 							class="h-20 w-20 rounded-xl border-2 border-gray-300 object-fill p-4"
 						/>
@@ -211,7 +225,7 @@
 			<div class="flex w-full items-center justify-between gap-4 py-4">
 				<p class="text-3xl leading-10 font-medium tracking-wide text-black">shipping companies</p>
 				<button
-					onclick={() => (form = true)}
+					onclick={() => (shipping_company_form = true)}
 					class="flex items-center justify-center gap-2 rounded-lg bg-black px-4 py-2 font-medium text-white transition duration-200 ease-in-out hover:cursor-pointer hover:bg-gray-800 active:scale-95"
 				>
 					<svg
@@ -318,7 +332,7 @@
 			<div class="flex w-full items-center justify-between gap-4 py-4">
 				<p class="text-3xl leading-10 font-medium tracking-wide text-black">Administrators</p>
 				<button
-					onclick={() => (form = true)}
+					onclick={() => (adminform = true)}
 					class="flex items-center justify-center gap-2 rounded-lg bg-black px-4 py-2 font-medium text-white transition duration-200 ease-in-out hover:cursor-pointer hover:bg-gray-800 active:scale-95"
 				>
 					<svg
@@ -383,6 +397,228 @@
 			</table>
 		</div>
 	{/if}
+</div>
+
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- admin form -->
+<div
+	onclick={() => {
+		adminform = false;
+		menuopen = false;
+	}}
+	class={[
+		'fixed inset-0 z-50 flex items-center justify-center bg-black/50',
+		adminform ? 'flex' : 'hidden'
+	]}
+>
+	<div
+		onclick={(e) => e.stopPropagation()}
+		class="relative z-60 max-h-[90vh] w-1/2 min-w-120 overflow-y-auto rounded-xl bg-white p-6 shadow-lg"
+	>
+		<!-- Header -->
+		<div class="mb-6 flex items-center justify-between">
+			<h2 class="text-lg font-semibold tracking-wide">Add New Administrator</h2>
+			<button
+				onclick={() => {
+					adminform = false;
+					menuopen = false;
+				}}
+				class="flex h-6 w-6 items-center justify-center rounded-full text-gray-400 hover:bg-gray-200 active:scale-95"
+			>
+				✕
+			</button>
+		</div>
+
+		<form class="flex flex-col">
+			<div class=" flex h-full w-full flex-col gap-5">
+				<div class="flex w-full flex-col gap-1">
+					<label for="" class="font-medium tracking-wide">Full Name</label>
+					<input
+						bind:value={admin_fullname}
+						type="text"
+						name=""
+						id=""
+						placeholder="eg. John Doe"
+						class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+					/>
+				</div>
+				<div class="flex w-full flex-col gap-1">
+					<label for="" class="font-medium tracking-wide">Email Address</label>
+					<input
+						bind:value={admin_email}
+						type="email"
+						name=""
+						id=""
+						placeholder="eg. johndoe@gmail.com"
+						class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+					/>
+				</div>
+				<div class="flex w-full flex-col gap-1 pb-3">
+					<label for="" class="font-medium tracking-wide">Role</label>
+					<div class="relative w-full">
+						<button
+							class="flex w-full items-center justify-between rounded-lg border-2 border-gray-300 px-4 py-2 focus:ring-2 focus:ring-gray-200"
+							onclick={() => {
+								menuopen = !menuopen;
+							}}
+							><span>{dropdownvalue || 'Select a role'}</span>
+							<svg
+								class="-mr-1 size-5 text-gray-400"
+								viewBox="0 0 20 20"
+								fill=""
+								aria-hidden="true"
+								data-slot="icon"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+									clip-rule="evenodd"
+								/>
+							</svg></button
+						>
+						{#if menuopen}
+							<ul
+								class="absolute mt-1 w-full rounded-lg border-1 border-gray-300 bg-white p-1 shadow-lg"
+							>
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									onclick={() => {
+										menuopen = false;
+										dropdownvalue = 'administrator';
+									}}
+									class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
+								>
+									administrator
+								</li>
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									onclick={() => {
+										menuopen = false;
+										dropdownvalue = 'manager';
+									}}
+									class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
+								>
+									manager
+								</li>
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									onclick={() => {
+										menuopen = false;
+										dropdownvalue = 'support';
+									}}
+									class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
+								>
+									support
+								</li>
+							</ul>
+						{/if}
+					</div>
+				</div>
+
+				<div class="flex w-full items-center justify-end gap-4 py-2">
+					<button
+						onclick={() => {
+							dropdownvalue = null;
+							admin_email = null;
+							admin_fullname = null;
+						}}
+						class="flex cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
+						>cancel</button
+					>
+					<button
+						class="flex cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
+						>submit</button
+					>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- shipping company form -->
+<div
+	onclick={() => {
+		shipping_company_form = false;
+	}}
+	class={[
+		'fixed inset-0 z-50 flex items-center justify-center bg-black/50',
+		shipping_company_form ? 'flex' : 'hidden'
+	]}
+>
+	<div
+		onclick={(e) => e.stopPropagation()}
+		class="relative z-60 max-h-[90vh] w-1/2 min-w-120 overflow-y-auto rounded-xl bg-white p-6 shadow-lg"
+	>
+		<!-- Header -->
+		<div class="mb-6 flex items-center justify-between">
+			<h2 class="text-lg font-semibold tracking-wide">Add New Administrator</h2>
+			<button
+				onclick={() => {
+					shipping_company_form = false;
+				}}
+				class="flex h-6 w-6 items-center justify-center rounded-full text-gray-400 hover:bg-gray-200 active:scale-95"
+			>
+				✕
+			</button>
+		</div>
+
+		<form class="flex flex-col">
+			<div class=" flex h-full w-full flex-col gap-5">
+				<div class="flex w-full flex-col gap-1">
+					<label for="" class="font-medium tracking-wide">company name </label>
+					<input
+						bind:value={shipping_company_name}
+						type="text"
+						name=""
+						id=""
+						placeholder="eg. fast express"
+						class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+					/>
+				</div>
+				<div class="flex w-full flex-col gap-1">
+					<label for="" class="font-medium tracking-wide">default rate</label>
+					<input
+						bind:value={shipping_company_default_rate}
+						type="text"
+						name=""
+						id=""
+						placeholder="eg. 450 dzd"
+						class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+					/>
+				</div>
+
+				<div class="flex w-full flex-col gap-1">
+					<label for="" class="font-medium tracking-wide">estimated delivery time</label>
+					<input
+						bind:value={shipping_company_estimated_time}
+						type="number"
+						name=""
+						id=""
+						placeholder="eg. 2-4 days"
+						class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+					/>
+				</div>
+				<div class="flex w-full items-center justify-end gap-4 py-2">
+					<button
+						onclick={() => {
+							shipping_company_default_rate = null;
+							shipping_company_estimated_time = null;
+							shipping_company_name = null;
+						}}
+						class="flex cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
+						>cancel</button
+					>
+					<button
+						class="flex cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
+						>add company</button
+					>
+				</div>
+			</div>
+		</form>
+	</div>
 </div>
 
 {#snippet shippingcompanyrow(company)}

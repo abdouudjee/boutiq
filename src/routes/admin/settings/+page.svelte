@@ -17,9 +17,12 @@
 	});
 	let wilayas = $state([]);
 	onMount(async () => {
-		const { data } = await supabase.from('wilayas').select('*').range(0, 9);
+		const { data } = await supabase.from('wilayas').select('*').range(0, 50);
 		console.log(data);
 		wilayas = data;
+
+		let { data: products, error: err } = await supabase.from('products').select('*');
+		console.log('prod', products, 'err:', err);
 	});
 	// add admin form vars
 	let adminform = $state(false);
@@ -32,6 +35,12 @@
 	let shipping_company_name = $state('');
 	let shipping_company_default_rate = $state('');
 	let shipping_company_estimated_time = $state('');
+	// removing overflow when the forms are open
+	$effect(() => {
+		shipping_company_form || adminform
+			? (document.body.style.overflow = 'hidden')
+			: (document.body.style.overflow = 'auto');
+	});
 </script>
 
 <div
@@ -554,7 +563,7 @@
 	>
 		<!-- Header -->
 		<div class="mb-6 flex items-center justify-between">
-			<h2 class="text-lg font-semibold tracking-wide">Add New Administrator</h2>
+			<h2 class="text-lg font-semibold tracking-wide">Add New shipping company</h2>
 			<button
 				onclick={() => {
 					shipping_company_form = false;

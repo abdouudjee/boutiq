@@ -1,7 +1,7 @@
 <script>
-	import Field from '$lib/fieldrow.svelte';
 	import { category_row } from '$lib/tablerow.svelte';
-	let add_category_form = $state(false);
+	import { Category } from '$lib/data_structers';
+	let add_category_form = $state(true);
 	$effect(() => {
 		add_category_form
 			? (document.body.style.overflow = 'hidden')
@@ -14,7 +14,14 @@
 
 	// custom fields
 	let custom_fields = $state([]);
-	$inspect(custom_fields);
+
+	let adding_new_field = $state(false);
+	let name = $state('');
+	let def_val = $state('');
+	let is_req = $state(false);
+	let type = $state(null);
+
+	let menuopen = $state(false);
 </script>
 
 <div
@@ -194,41 +201,229 @@
 						</p>
 					</div>
 					<div class="flex w-full flex-col items-center justify-center gap-4">
-						{#each custom_fields as field, index}
-							<Field
-								remove={() => {
-									custom_fields.splice(index, 1);
+						<table>
+							<thead>
+								{#if custom_fields.length}
+									<tr class="hover:bg-gray-50">
+										<th class="w-35 py-2 text-center">name</th>
+										<th class="w-35 py-2 text-center">default value</th>
+										<th class="w-35 py-2 text-center">type</th>
+										<th class="w-35 py-2 text-center">required</th>
+										<th class="w-35 py-2 text-center"></th>
+									</tr>
+								{/if}
+							</thead>
+							<tbody>
+								{#each custom_fields as field, index}
+									<tr class="hover:bg-gray-50">
+										<td class="w-35 py-2 text-center">{field.name}</td>
+										<td class="w-35 py-2 text-center">{field.def_val}</td>
+										<td class="w-35 py-2 text-center">{field.type}</td>
+										<td class="w-35 py-2 text-center">{field.is_req ? 'yes' : 'no'}</td>
+										<td class="w-35 py-2 text-center">
+											<!-- svelte-ignore a11y_consider_explicit_label -->
+											<button
+												onclick={() => {
+													custom_fields.splice(index, 1);
+												}}
+												type="button"
+												class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-lg hover:bg-gray-200 active:scale-95"
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="24"
+													height="24"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													class="lucide lucide-trash text-muted-foreground h-4 w-4"
+													><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+													></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg
+												>
+											</button></td
+										>
+									</tr>
+								{:else}
+									<tr>
+										<td colspan="100%" class="text-center">
+											<p class="text-sm font-medium text-gray-400">No custom fields added yet</p>
+										</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+						{#if adding_new_field === false}
+							<button
+								onclick={() => {
+									adding_new_field = !adding_new_field;
 								}}
-								bind:name={field.name}
-								bind:def_val={field.def_val}
-								bind:is_req={field.is_req}
-								bind:type={field.type}
-							/>
-						{:else}
-							<p class="text-sm font-medium text-gray-400">No custom fields added yet</p>
-						{/each}
-						<button
-							onclick={() => {
-								custom_fields.push({ name: '', def_val: '', type: null, is_req: false });
-							}}
-							type="button"
-							class="flex w-full items-center justify-center gap-3 rounded-lg border-2 border-gray-300 bg-white py-2 font-semibold hover:bg-gray-100"
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="24"
-								height="24"
-								viewBox="0 0 24 20"
-								fill="none"
-								stroke=""
-								stroke-width="3"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="lucide lucide-plus h-5 w-5 stroke-black"
-								><path d="M5 12h14"></path><path d="M12 5v14"></path></svg
+								type="button"
+								class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border-2 border-gray-300 bg-white py-2 font-semibold hover:bg-gray-100"
 							>
-							add a custom field</button
-						>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									viewBox="0 0 24 20"
+									fill="none"
+									stroke=""
+									stroke-width="3"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class="lucide lucide-plus h-5 w-5 stroke-black"
+									><path d="M5 12h14"></path><path d="M12 5v14"></path></svg
+								>
+								add a custom field</button
+							>
+						{:else}
+							<div class="w-full px-2">
+								<div
+									class=" flex w-full items-center justify-between rounded-lg px-1 py-2 hover:bg-gray-100"
+								>
+									<input
+										type="text"
+										bind:value={name}
+										name=""
+										id=""
+										placeholder="field name"
+										class="w-33 rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+									/>
+									<div class="relative w-33">
+										<button
+											type="button"
+											class="flex w-full items-center justify-between rounded-lg border-2 border-gray-300 px-4 py-2 focus:ring-2 focus:ring-gray-200"
+											onclick={() => {
+												menuopen = !menuopen;
+											}}
+											><span>{type || 'field type'}</span>
+											<svg
+												class="-mr-1 size-5 text-gray-400"
+												viewBox="0 0 20 20"
+												fill=""
+												aria-hidden="true"
+												data-slot="icon"
+											>
+												<path
+													fill-rule="evenodd"
+													d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+													clip-rule="evenodd"
+												/>
+											</svg></button
+										>
+										{#if menuopen}
+											<ul
+												class="absolute z-1 mt-1 w-full rounded-lg border-1 border-gray-300 bg-white p-1 shadow-lg"
+											>
+												<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+												<!-- svelte-ignore a11y_click_events_have_key_events -->
+												<li
+													onclick={() => {
+														menuopen = false;
+														type = 'text';
+													}}
+													class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
+												>
+													text
+												</li>
+												<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+												<!-- svelte-ignore a11y_click_events_have_key_events -->
+												<li
+													onclick={() => {
+														menuopen = false;
+														type = 'number';
+													}}
+													class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
+												>
+													number
+												</li>
+												<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+												<!-- svelte-ignore a11y_click_events_have_key_events -->
+												<li
+													onclick={() => {
+														menuopen = false;
+														type = 'date';
+													}}
+													class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
+												>
+													date
+												</li>
+
+												<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+												<!-- svelte-ignore a11y_click_events_have_key_events -->
+												<li
+													onclick={() => {
+														menuopen = false;
+														type = 'yes/no';
+													}}
+													class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
+												>
+													yes/no
+												</li>
+											</ul>
+										{/if}
+									</div>
+									<input
+										bind:value={def_val}
+										type="text"
+										name=""
+										id=""
+										placeholder="default value"
+										class="w-33 rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+									/>
+									<div class="flex items-center gap-2">
+										<label for="">required</label>
+
+										<input
+											bind:checked={is_req}
+											type="checkbox"
+											name=""
+											id=""
+											class="h-4 w-4 rounded-sm border-1 ring-black checked:bg-black"
+										/>
+									</div>
+								</div>
+								<div class="flex w-full items-center justify-end gap-4 px-2 py-2">
+									<button
+										onclick={() => {
+											type = null;
+											menuopen = false;
+											name = null;
+											def_val = null;
+											is_req = false;
+											adding_new_field = false;
+										}}
+										type="button"
+										class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
+										>cancel</button
+									>
+									<!-- change into submit later !!! -->
+									<button
+										disabled={!name || !type || !def_val}
+										onclick={() => {
+											custom_fields.push({
+												name: name,
+												def_val: def_val,
+												type: type,
+												is_req: is_req
+											});
+											type = null;
+											menuopen = false;
+											name = null;
+											def_val = null;
+											is_req = false;
+
+											adding_new_field = !adding_new_field;
+										}}
+										type="button"
+										class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
+										>add field
+									</button>
+								</div>
+							</div>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -238,12 +433,33 @@
 						category_description = null;
 						category_img = null;
 						category_name = null;
+						custom_fields = [];
 					}}
 					type="button"
 					class="flex cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
 					>cancel</button
 				>
+				<!-- change into submit later !!! -->
 				<button
+					onclick={() => {
+						let definition = {};
+						let x = Array.from(custom_fields);
+						console.log('x', x);
+						// for (let i = 0; i < custom_fields.length; i++) {
+						// 	definition [i] = custom_fields[i];
+						// 	console.log(custom_fields[i]);
+						// 	console.log(definition[i]);
+						// }
+						const new_category = new Category(
+							category_name,
+							category_description,
+
+							definition,
+							category_img
+						);
+						console.log(new_category);
+					}}
+					type="button"
 					class="flex cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
 					>add category
 				</button>

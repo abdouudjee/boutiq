@@ -40,10 +40,31 @@
 	let categories = $state([{}]);
 	onMount(async () => {
 		let { data, error: err } = await supabase.from('categories').select('*');
-		console.error(err);
-		console.log(data);
 		categories = data;
 	});
+	function empty() {
+		adding_new_variant = false;
+		new_variant.stock = null;
+		new_variant.img = null;
+		variants = [];
+		new_product.buying_price = null;
+		new_product.selling_price = null;
+		new_product.name = null;
+		new_product.imgs = [];
+		new_product.stock = null;
+		new_product.category = null;
+		new_product.description = null;
+	}
+	function check_basic_info() {
+		return (
+			new_product.name &&
+			new_product.description &&
+			new_product.imgs &&
+			new_product.category &&
+			new_product.buying_price &&
+			new_product.selling_price
+		);
+	}
 </script>
 
 <div
@@ -267,7 +288,7 @@
 											menuopen = !menuopen;
 										}}
 									>
-										<span>{selected_category || 'Select a category'}</span>
+										<span>{new_product.category || 'Select a category'}</span>
 										<svg
 											class="-mr-1 size-5 text-gray-400"
 											viewBox="0 0 20 20"
@@ -291,8 +312,12 @@
 												<li
 													onclick={() => {
 														menuopen = false;
-														selected_category = category.name;
+														new_product.category = category.name;
 														def = category.definition;
+														// removing all variants in case the category of the product changed
+														variants = [];
+														// closing the adding new variant subform to reset the inputs
+														adding_new_variant = false;
 													}}
 													class="w-full rounded-lg px-5 py-1.5 text-left text-sm hover:bg-gray-100"
 												>
@@ -330,7 +355,7 @@
 								onkeypress={(e) => {
 									if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
 								}}
-								oninput={() => {
+								oninput={(e) => {
 									if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
 										e.currentTarget.value = 0;
 									}
@@ -359,7 +384,7 @@
 								onkeypress={(e) => {
 									if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
 								}}
-								oninput={() => {
+								oninput={(e) => {
 									if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
 										e.currentTarget.value = 0;
 									}
@@ -469,16 +494,16 @@
 						>
 					</label>
 					{#if !has_variants}
-						<div class="grid w-full grid-cols-2">
+						<div class="grid h-fit w-full grid-cols-2 gap-2">
 							<!-- product stock -->
 							<div class="flex w-full flex-col gap-1">
-								<label for="" class="font-medium tracking-wide">price </label>
+								<label for="" class="font-medium tracking-wide">stock </label>
 								<input
 									bind:value={new_product.stock}
 									onkeypress={(e) => {
 										if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
 									}}
-									oninput={() => {
+									oninput={(e) => {
 										if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
 											e.currentTarget.value = 0;
 										}
@@ -501,8 +526,104 @@
 								/>
 							</div>
 							<!-- the rest of category fields here -->
+							{#each def as inputfield}
+								{#if inputfield.type == 'yes/no'}
+									<label class="inline-flex cursor-pointer items-center">
+										<input type="checkbox" class="peer sr-only" name={inputfield.name} />
+										<div
+											class="peer relative h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-black peer-focus:ring-4 peer-focus:ring-gray-600 peer-focus:outline-none after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full"
+										></div>
+										<span class="ms-3 text-sm font-medium text-gray-900">{inputfield.name}</span>
+									</label>
+								{:else if inputfield.type == 'number'}
+									<div class=" flex w-full flex-col gap-1">
+										<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
+										<input
+											onkeypress={(e) => {
+												if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
+											}}
+											oninput={(e) => {
+												if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
+													e.currentTarget.value = 0;
+												}
+											}}
+											onpaste={(e) => {
+												if (
+													e.clipboardData.includes('e') ||
+													window.clipboardData.get('text').includes('e')
+												) {
+													e.currentTarget.value = 0;
+													e.preventDefault();
+												}
+											}}
+											type="number"
+											name={inputfield.name}
+											id=""
+											placeholder="eg. 58 "
+											min="0"
+											class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+										/>
+									</div>
+								{:else if inputfield.type == 'date'}
+									<div class=" flex w-full flex-col gap-1">
+										<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
+										<input
+											type="date"
+											name={inputfield.name}
+											id=""
+											placeholder="eg. 58 piece"
+											min="0"
+											class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+										/>
+									</div>
+								{:else}
+									<div class="flex w-full flex-col gap-1">
+										<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
+										<input
+											type="text"
+											name={inputfield.name}
+											id=""
+											placeholder="eg. red"
+											class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+										/>
+									</div>
+								{/if}
+							{/each}
 						</div>
 					{/if}
+					<!-- add and cancel product buttons -->
+					<div class="flex w-full items-center justify-end gap-4 px-2 py-2">
+						<button
+							onclick={() => {
+								empty();
+							}}
+							type="button"
+							class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
+							>cancel</button
+						>
+						<!-- change into submit later !!! -->
+						<button
+							disabled={!new_product}
+							onclick={() => {
+								if (!has_variants) {
+									for (let i = 0; i < def.length; i++) {
+										if (def[i].type === 'yes/no') {
+											let x = document.getElementsByName(def[i].name)[0];
+											new_product[def[i].name] = x.checked;
+										} else {
+											let x = document.getElementsByName(def[i].name)[0];
+											new_product[def[i].name] = x.value;
+										}
+									}
+								}
+								console.log(new_product);
+								empty();
+							}}
+							type="button"
+							class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
+							>add product
+						</button>
+					</div>
 				</div>
 				<!-- variants tab  -->
 			{:else if selected == 'variants'}
@@ -513,6 +634,12 @@
 						<div class="flex h-40 w-full flex-col items-center justify-center">
 							<p class=" h-fit text-sm font-medium text-gray-400">
 								toggle the switch on to be able to add variants
+							</p>
+						</div>
+					{:else if !check_basic_info()}
+						<div class="flex h-40 w-full flex-col items-center justify-center">
+							<p class=" h-fit text-sm font-medium text-gray-400">
+								make sure to fill all the basic info first
 							</p>
 						</div>
 					{:else}
@@ -535,8 +662,8 @@
 										<td class="w-15 p-2 text-center">{i + 1}</td>
 										<td class="w-15 p-2 text-left"
 											><img
-												src={new_variant.img && variant.img[0]
-													? URL.createObjectURL(new_variant.img[0])
+												src={variant.img && variant.img[0]
+													? URL.createObjectURL(variant.img[0])
 													: (null ?? '/placeholder.svg')}
 												onerror={() => {
 													this.src = '/placeholder.svg';
@@ -551,7 +678,7 @@
 										{/each}
 									</tr>
 								{:else}
-									<tr>
+									<tr class="h-30">
 										<td class="text-center" colspan="100%">
 											<p class="text-sm font-medium text-gray-400">No variants added yet</p>
 										</td>
@@ -586,16 +713,17 @@
 							<div
 								class="flex w-full flex-col items-start gap-3 rounded-2xl border-1 border-gray-200 p-2"
 							>
+								<!-- the input fields -->
 								<div class="grid w-full grid-cols-2 gap-2">
 									<!-- new variant stock -->
 									<div class=" w-full">
-										<label for="" class="font-medium tracking-wide">stock </label>
+										<label for="" class="font-medium tracking-wide">variant stock </label>
 										<input
 											bind:value={new_variant.stock}
 											onkeypress={(e) => {
 												if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
 											}}
-											oninput={() => {
+											oninput={(e) => {
 												if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
 													e.currentTarget.value = 0;
 												}
@@ -649,7 +777,7 @@
 															e.preventDefault();
 														}
 													}}
-													type={inputfield.type}
+													type="number"
 													name={inputfield.name}
 													id=""
 													placeholder="eg. 58 "
@@ -674,7 +802,7 @@
 												<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
 												<input
 													type="text"
-													name=""
+													name={inputfield.name}
 													id=""
 													placeholder="eg. red"
 													class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
@@ -751,7 +879,7 @@
 									{/if}
 								</div>
 							</div>
-							<!-- cancel and add buttons -->
+							<!-- cancel and add variant buttons -->
 							<div class="flex w-full items-center justify-end gap-4 px-2 py-2">
 								<button
 									onclick={() => {
@@ -766,22 +894,21 @@
 								<!-- change into submit later !!! -->
 								<button
 									onclick={() => {
-										variants.push({
-											img: new_variant.img || null,
-											stock: new_variant.stock || null
-										});
-										adding_new_variant = false;
-										new_variant.stock = null;
-										new_variant.img = null;
 										for (let i = 0; i < def.length; i++) {
 											if (def[i].type === 'yes/no') {
 												let x = document.getElementsByName(def[i].name)[0];
-												console.log(x.checked);
+												new_variant[def[i].name] = x.checked;
 											} else {
 												let x = document.getElementsByName(def[i].name)[0];
-												console.log(x.value);
+												new_variant[def[i].name] = x.value;
 											}
 										}
+
+										variants.push({ ...new_variant });
+										adding_new_variant = false;
+										new_variant.stock = null;
+										new_variant.img = null;
+										console.log(variants);
 									}}
 									type="button"
 									class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"

@@ -2,7 +2,7 @@
 	import { supabase } from '$lib/index.js';
 	import { category_row, product_row } from '$lib/tablerow.svelte';
 	import { onMount } from 'svelte';
-	let add_product_form = $state(true);
+	let add_product_form = $state(false);
 	$effect(() => {
 		add_product_form
 			? (document.body.style.overflow = 'hidden')
@@ -38,9 +38,16 @@
 	let def = $state([]);
 	// categories list to be fetched from db
 	let categories = $state([{}]);
+	// products list to be fetched from db
+	let products = $state([]);
 	onMount(async () => {
-		let { data, error: err } = await supabase.from('categories').select('*');
+		let { data, error: categories_err } = await supabase.from('categories').select('*');
 		categories = data;
+		let { data: productslist, error: products_err } = await supabase
+			.from('products')
+			.select('name,img_url,selling_price,initial_stock,category_id');
+		products = productslist;
+		console.log(productslist);
 	});
 	function empty() {
 		adding_new_variant = false;
@@ -109,89 +116,15 @@
 		</tr>
 	</thead>
 	<tbody class="">
-		{@render product_row({
-			name: 'air frier',
-			price: 20000,
-			inventory: 10,
-			category: 'elctronics',
-			status: 'in stock'
-		})}
-		{@render product_row({
-			name: 'fridge',
-			price: 5475,
-			inventory: 47,
-			category: 'electronics',
-			status: 'low stock'
-		})}
-		{@render product_row({
-			name: 'bike',
-			price: 33333,
-			inventory: 0,
-			category: 'sports',
-			status: 'out of stock'
-		})}
-		{@render product_row({
-			name: 'coffee machine',
-			price: 333,
-			inventory: 25,
-			category: 'kitchen',
-			status: 'in stock'
-		})}
-		{@render product_row({
-			name: 'ice cream machine',
-			price: 8399,
-			inventory: 47,
-			category: 'kitchen',
-			status: 'low stock'
-		})}
-		{@render product_row({
-			name: 'meow',
-			price: 400,
-			inventory: 0,
-			category: 'kitchen',
-			status: 'out of stock'
-		})}{@render product_row({
-			name: 'air frier',
-			price: 20000,
-			inventory: 10,
-			category: 'elctronics',
-			status: 'in stock'
-		})}
-		{@render product_row({
-			name: 'fridge',
-			price: 5475,
-			inventory: 47,
-			category: 'electronics',
-			status: 'low stock'
-		})}
-		{@render product_row({
-			name: 'bike',
-			price: 33333,
-			inventory: 0,
-			category: 'sports',
-			status: 'out of stock'
-		})}
-		{@render product_row({
-			name: 'coffee machine',
-			price: 333,
-			inventory: 25,
-			category: 'kitchen',
-			status: 'in stock'
-		})}
-		{@render product_row({
-			name: 'ice cream machine',
-			price: 8399,
-			inventory: 47,
-			category: 'kitchen',
-			status: 'low stock'
-		})}
-		{@render product_row({
-			name: 'meow',
-			price: 400,
-			inventory: 0,
-			category: 'kitchen',
-			status: 'out of stock'
-		})}
+		{#each products as product}
+			{@render product_row({
+				name: product.name,
+				img: product.image_url,
+				category: product.category_id,
+				price: product.selling_price,
+				inventory: product.initial_stock
+			})}
+		{/each}
 	</tbody>
 </table>
 

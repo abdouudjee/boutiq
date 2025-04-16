@@ -1,4 +1,6 @@
 <script module>
+	import Product from './product.svelte';
+
 	export { product_row, category_row, order_row, customer_row };
 </script>
 
@@ -23,17 +25,21 @@
 		<td class="w-30 min-w-25 border-b-2 border-b-gray-300 py-2">
 			<p
 				class={[
-					' mx-auto  w-fit rounded-full  px-2  py-1 text-sm font-medium',
-					product.status == 'low stock'
-						? 'border-1 border-yellow-200 bg-yellow-200 font-medium  text-yellow-700'
-						: '',
-					product.status == 'in stock' ? 'bg-green-200 font-medium  text-green-700' : '',
-					product.status == 'out of stock' ? 'bg-red-200 font-medium  text-red-700' : ''
+					' mx-auto  w-fit rounded-full  border-1 px-2  py-1 text-sm font-medium',
+					product.inventory === 0
+						? ' border-red-300 bg-red-200   text-red-700'
+						: product.inventory < 15
+							? ' border-yellow-300 bg-yellow-200   text-yellow-700'
+							: ' border-green-300  bg-green-200  text-green-700'
 				]}
 			>
-				{product.status}
-			</p></td
-		>
+				{product.inventory === 0
+					? 'out of stock'
+					: product.inventory < 15
+						? 'low stock'
+						: 'in stock'}
+			</p>
+		</td>
 		<td class="w-20 border-b-2 border-b-gray-300 px-4 py-2 text-center">
 			<!-- svelte-ignore a11y_consider_explicit_label -->
 			<button class="rounded-lg p-1 hover:bg-gray-200"
@@ -127,10 +133,10 @@
 	<tr>
 		<td class="w-80 border-b-2 border-b-gray-300 px-4 py-2 text-left font-medium">
 			<div class="flex flex-col">
-				<p class="font-medium text-sm">
+				<p class="text-sm font-medium">
 					{customer.name}
 				</p>
-				<p class="text-gray-500 text-sm">
+				<p class="text-sm text-gray-500">
 					{customer.email}
 				</p>
 			</div>

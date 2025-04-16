@@ -1,27 +1,49 @@
 <script>
-	import { product_row } from '$lib/tablerow.svelte';
+	import { supabase } from '$lib/index.js';
+	import { category_row, product_row } from '$lib/tablerow.svelte';
+	import { onMount } from 'svelte';
 	let add_product_form = $state(true);
 	$effect(() => {
 		add_product_form
 			? (document.body.style.overflow = 'hidden')
 			: (document.body.style.overflow = 'auto');
 	});
-	let product_name = $state('');
-	let product_description = $state('');
-	let product_imgs = $state([]);
+	let new_product = $state({
+		name: null,
+		description: null,
+		imgs: [],
+		buying_price: null,
+		selling_price: null,
+		category: null,
+		stock: null
+	});
+	// selected tab
 	let selected = $state('variants');
+
 	let price = $state();
 	$effect(() => {
 		price = price + '';
 		price.replace(/[eE]/g, '');
 	});
 	let menuopen = $state(false);
-	let dropdownvalue = $state('');
+	let selected_category = $state('');
 	let has_variants = $state(true);
-	let variant_img = $state(null);
+	let new_variant = $state({
+		img: null,
+		stock: null
+	});
 	let adding_new_variant = $state(false);
-	let varaint_stock = $state(null);
 	let variants = $state([]);
+	// using the category definition to change the variants inputs
+	let def = $state([]);
+	// categories list to be fetched from db
+	let categories = $state([{}]);
+	onMount(async () => {
+		let { data, error: err } = await supabase.from('categories').select('*');
+		console.error(err);
+		console.log(data);
+		categories = data;
+	});
 </script>
 
 <div
@@ -185,7 +207,9 @@
 				✕
 			</button>
 		</div>
+		<!-- form  -->
 		<form class="flex flex-col justify-between py-10" method="POST">
+			<!-- selected tab -->
 			<div
 				class="mx-auto flex h-fit w-fit items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-1.5"
 			>
@@ -210,12 +234,15 @@
 					]}>variants</button
 				>
 			</div>
+			<!-- product tab -->
 			{#if selected == 'product'}
 				<div class="flex flex-col gap-3 py-3">
 					<div class="flex items-center justify-between gap-2">
+						<!-- name -->
 						<div class="flex w-full flex-col gap-1">
 							<label for="" class="font-medium tracking-wide">product name </label>
 							<input
+								bind:value={new_product.name}
 								type="text"
 								name=""
 								id=""
@@ -223,16 +250,89 @@
 								class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
 							/>
 						</div>
+						<!-- category -->
+						<div class="flex w-full items-start justify-between gap-2">
+							<div class="flex w-full flex-col gap-1">
+								<label for="" class="font-medium tracking-wide">Category</label>
+								<button
+									type="button"
+									class="relative w-full"
+									onblur={() => {
+										menuopen = false;
+									}}
+								>
+									<div
+										class="flex w-full items-center justify-between rounded-lg border-2 border-gray-300 px-4 py-2 focus:ring-2 focus:ring-gray-200"
+										onclick={() => {
+											menuopen = !menuopen;
+										}}
+									>
+										<span>{selected_category || 'Select a category'}</span>
+										<svg
+											class="-mr-1 size-5 text-gray-400"
+											viewBox="0 0 20 20"
+											fill=""
+											aria-hidden="true"
+											data-slot="icon"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+												clip-rule="evenodd"
+											/>
+										</svg>
+									</div>
+									{#if menuopen}
+										<ul
+											class="absolute z-10 mt-1 flex w-full flex-col items-start rounded-lg border-1 border-gray-300 bg-white p-1 shadow-lg"
+										>
+											{#each categories as category}
+												<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+												<li
+													onclick={() => {
+														menuopen = false;
+														selected_category = category.name;
+														def = category.definition;
+													}}
+													class="w-full rounded-lg px-5 py-1.5 text-left text-sm hover:bg-gray-100"
+												>
+													{category.name}
+												</li>
+											{/each}
+										</ul>
+									{/if}
+								</button>
+							</div>
+						</div>
+					</div>
+					<!-- description -->
+					<div class="flex w-full flex-col items-start justify-start">
+						<label for="store-description" class="font-medium">product description </label>
+
+						<textarea
+							bind:value={new_product.description}
+							name="new-product-description"
+							id=""
+							placeholder="enter category description"
+							class="mt-2 h-20 w-full rounded-lg border-2 border-gray-300 text-left ring-0"
+							style=" 
+						scroll-behavior: smooth;
+						scrollbar-width: none;"
+						>
+						</textarea>
+					</div>
+					<div class="flex items-center justify-between gap-2">
+						<!--price  -->
 						<div class="flex w-full flex-col gap-1">
-							<label for="" class="font-medium tracking-wide">price </label>
+							<label for="" class="font-medium tracking-wide">buying price </label>
 							<input
-								bind:value={price}
+								bind:value={new_product.buying_price}
 								onkeypress={(e) => {
 									if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
 								}}
 								oninput={() => {
-									if (price < 0 || price.includes('e')) {
-										price = 0;
+									if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
+										e.currentTarget.value = 0;
 									}
 								}}
 								onpaste={(e) => {
@@ -240,7 +340,36 @@
 										e.clipboardData.includes('e') ||
 										window.clipboardData.get('text').includes('e')
 									) {
-										price = 0;
+										e.currentTarget.value = 0;
+										e.preventDefault();
+									}
+								}}
+								type="number"
+								name=""
+								id=""
+								placeholder="eg. 999 dzd"
+								min="0"
+								class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+							/>
+						</div>
+						<div class="flex w-full flex-col gap-1">
+							<label for="" class="font-medium tracking-wide">selling price </label>
+							<input
+								bind:value={new_product.selling_price}
+								onkeypress={(e) => {
+									if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
+								}}
+								oninput={() => {
+									if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
+										e.currentTarget.value = 0;
+									}
+								}}
+								onpaste={(e) => {
+									if (
+										e.clipboardData.includes('e') ||
+										window.clipboardData.get('text').includes('e')
+									) {
+										e.currentTarget.value = 0;
 										e.preventDefault();
 									}
 								}}
@@ -253,133 +382,16 @@
 							/>
 						</div>
 					</div>
-					<div class="flex w-full flex-col items-start justify-start">
-						<label for="store-description" class="font-medium">product description </label>
-
-						<textarea
-							name="store-description"
-							id=""
-							placeholder="enter category description"
-							class="mt-2 h-20 w-full rounded-lg border-2 border-gray-300 text-left ring-0"
-							style=" 
-						scroll-behavior: smooth;
-						scrollbar-width: none;"
-						>
-						</textarea>
-					</div>
-					<div class="flex w-full items-center justify-between gap-2">
-						<div class="flex w-full flex-col gap-1 pb-3">
-							<label for="" class="font-medium tracking-wide">Category</label>
-							<div class="relative mb-2 w-full">
-								<button
-									type="button"
-									class="flex w-full items-center justify-between rounded-lg border-2 border-gray-300 px-4 py-2 focus:ring-2 focus:ring-gray-200"
-									onclick={() => {
-										menuopen = !menuopen;
-									}}
-									><span>{dropdownvalue || 'Select a category'}</span>
-									<svg
-										class="-mr-1 size-5 text-gray-400"
-										viewBox="0 0 20 20"
-										fill=""
-										aria-hidden="true"
-										data-slot="icon"
-									>
-										<path
-											fill-rule="evenodd"
-											d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-											clip-rule="evenodd"
-										/>
-									</svg></button
-								>
-								{#if menuopen}
-									<ul
-										class="absolute z-10 mt-1 mb-2 w-full rounded-lg border-1 border-gray-300 bg-white p-1 shadow-lg"
-									>
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											onclick={() => {
-												menuopen = false;
-												dropdownvalue = 'electronics';
-											}}
-											class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
-										>
-											electronics
-										</li>
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											onclick={() => {
-												menuopen = false;
-												dropdownvalue = 'electronics';
-											}}
-											class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
-										>
-											electronics
-										</li>
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											onclick={() => {
-												menuopen = false;
-												dropdownvalue = 'electronics';
-											}}
-											class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
-										>
-											electronics
-										</li>
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											onclick={() => {
-												menuopen = false;
-												dropdownvalue = 'electronics';
-											}}
-											class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
-										>
-											electronics
-										</li>
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											onclick={() => {
-												menuopen = false;
-												dropdownvalue = 'electronics';
-											}}
-											class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
-										>
-											electronics
-										</li>
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											onclick={() => {
-												menuopen = false;
-												dropdownvalue = 'bikes';
-											}}
-											class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
-										>
-											bikes
-										</li>
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											onclick={() => {
-												menuopen = false;
-												dropdownvalue = 'cars';
-											}}
-											class="rounded-lg px-5 py-1.5 text-sm hover:bg-gray-100"
-										>
-											cars
-										</li>
-									</ul>
-								{/if}
-							</div>
-						</div>
-					</div>
+					<!-- imgs -->
 					<label for="" class="font-medium tracking-wide">product images</label>
 					<div class="flex w-full flex-wrap items-center justify-start gap-3">
-						{#each product_imgs as img, index}
+						{#each new_product.imgs as img, index}
 							<div class="relative h-fit w-fit">
 								<!-- svelte-ignore a11y_consider_explicit_label -->
 								<button
 									type="button"
 									onclick={() => {
-										product_imgs = product_imgs.filter((_, i) => i !== index);
+										new_product.imgs = new_product.imgs.filter((_, i) => i !== index);
 									}}
 									class="absolute -top-2 -right-2 h-6 w-6 cursor-pointer rounded-full bg-white p-1 hover:bg-gray-200"
 								>
@@ -405,7 +417,7 @@
 								/>
 							</div>
 						{/each}
-						{#if product_imgs.length < 6}
+						{#if new_product.imgs.length < 6}
 							<div
 								class="flex h-23 w-23 items-center justify-center rounded-md border border-dashed border-gray-300"
 							>
@@ -434,7 +446,7 @@
 									<input
 										onchange={(e) => {
 											if (e.target.files[0]) {
-												product_imgs.push(e.target.files[0]);
+												new_product.imgs.push(e.target.files[0]);
 												e.target.value = '';
 											}
 										}}
@@ -447,7 +459,6 @@
 							</div>
 						{/if}
 					</div>
-
 					<label class="inline-flex cursor-pointer items-center">
 						<input type="checkbox" value="" class="peer sr-only" bind:checked={has_variants} />
 						<div
@@ -458,27 +469,18 @@
 						>
 					</label>
 					{#if !has_variants}
-						<div class="flex items-center justify-between gap-2">
+						<div class="grid w-full grid-cols-2">
+							<!-- product stock -->
 							<div class="flex w-full flex-col gap-1">
-								<label for="" class="font-medium tracking-wide">color </label>
+								<label for="" class="font-medium tracking-wide">price </label>
 								<input
-									type="text"
-									name=""
-									id=""
-									placeholder="eg. red"
-									class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
-								/>
-							</div>
-							<div class="flex w-full flex-col gap-1">
-								<label for="" class="font-medium tracking-wide">stock </label>
-								<input
-									bind:value={price}
+									bind:value={new_product.stock}
 									onkeypress={(e) => {
 										if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
 									}}
 									oninput={() => {
-										if (price < 0 || price.includes('e')) {
-											price = 0;
+										if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
+											e.currentTarget.value = 0;
 										}
 									}}
 									onpaste={(e) => {
@@ -486,60 +488,19 @@
 											e.clipboardData.includes('e') ||
 											window.clipboardData.get('text').includes('e')
 										) {
-											price = 0;
+											e.currentTarget.value = 0;
 											e.preventDefault();
 										}
 									}}
 									type="number"
 									name=""
 									id=""
-									placeholder="eg. 58 piece"
+									placeholder="eg. 85 piece"
 									min="0"
 									class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 								/>
 							</div>
-						</div>
-
-						<div class="flex items-center justify-between gap-2">
-							<div class="flex w-full flex-col gap-1">
-								<label for="" class="font-medium tracking-wide">material </label>
-								<input
-									type="text"
-									name=""
-									id=""
-									placeholder="eg. leather"
-									class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
-								/>
-							</div>
-							<div class="flex w-full flex-col gap-1">
-								<label for="" class="font-medium tracking-wide">size </label>
-								<input
-									bind:value={price}
-									onkeypress={(e) => {
-										if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
-									}}
-									oninput={() => {
-										if (price < 0 || price.includes('e')) {
-											price = 0;
-										}
-									}}
-									onpaste={(e) => {
-										if (
-											e.clipboardData.includes('e') ||
-											window.clipboardData.get('text').includes('e')
-										) {
-											price = 0;
-											e.preventDefault();
-										}
-									}}
-									type="number"
-									name=""
-									id=""
-									placeholder="eg. 37"
-									min="0"
-									class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-								/>
-							</div>
+							<!-- the rest of category fields here -->
 						</div>
 					{/if}
 				</div>
@@ -562,6 +523,9 @@
 										<th class="w-25 p-2 text-left">variant</th>
 										<th class="w-25 p-2 text-left">image</th>
 										<th class="w-25 p-2 text-left">stock</th>
+										{#each def as th}
+											<th class="w-25 p-2 text-left">{th.name}</th>
+										{/each}
 									</tr>
 								</thead>
 							{/if}
@@ -571,8 +535,8 @@
 										<td class="w-15 p-2 text-center">{i + 1}</td>
 										<td class="w-15 p-2 text-left"
 											><img
-												src={variant_img && variant.img[0]
-													? URL.createObjectURL(variant_img[0])
+												src={new_variant.img && variant.img[0]
+													? URL.createObjectURL(new_variant.img[0])
 													: (null ?? '/placeholder.svg')}
 												onerror={() => {
 													this.src = '/placeholder.svg';
@@ -582,6 +546,9 @@
 											/></td
 										>
 										<td class="w-15 p-2 text-left">{variant.stock ?? '0'}</td>
+										{#each def as td}
+											<td class="w-15 p-2 text-left">{variant[td.name] ?? '-'}</td>
+										{/each}
 									</tr>
 								{:else}
 									<tr>
@@ -619,27 +586,18 @@
 							<div
 								class="flex w-full flex-col items-start gap-3 rounded-2xl border-1 border-gray-200 p-2"
 							>
-								<div class="flex w-full items-center justify-between gap-2">
-									<div class="flex w-full flex-col gap-1">
-										<label for="" class="font-medium tracking-wide">color </label>
-										<input
-											type="text"
-											name=""
-											id=""
-											placeholder="eg. red"
-											class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
-										/>
-									</div>
-									<div class="flex w-full flex-col gap-1">
+								<div class="grid w-full grid-cols-2 gap-2">
+									<!-- new variant stock -->
+									<div class=" w-full">
 										<label for="" class="font-medium tracking-wide">stock </label>
 										<input
-											bind:value={varaint_stock}
+											bind:value={new_variant.stock}
 											onkeypress={(e) => {
 												if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
 											}}
 											oninput={() => {
-												if (varaint_stock < 0 || varaint_stock.includes('e')) {
-													varaint_stock = 0;
+												if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
+													e.currentTarget.value = 0;
 												}
 											}}
 											onpaste={(e) => {
@@ -647,7 +605,7 @@
 													e.clipboardData.includes('e') ||
 													window.clipboardData.get('text').includes('e')
 												) {
-													varaint_stock = 0;
+													e.currentTarget.value = 0;
 													e.preventDefault();
 												}
 											}}
@@ -659,12 +617,78 @@
 											class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 										/>
 									</div>
+									<!-- the rest of category feilds -->
+									{#each def as inputfield}
+										{#if inputfield.type == 'yes/no'}
+											<label class="inline-flex cursor-pointer items-center">
+												<input type="checkbox" class="peer sr-only" name={inputfield.name} />
+												<div
+													class="peer relative h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-black peer-focus:ring-4 peer-focus:ring-gray-600 peer-focus:outline-none after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full"
+												></div>
+												<span class="ms-3 text-sm font-medium text-gray-900">{inputfield.name}</span
+												>
+											</label>
+										{:else if inputfield.type == 'number'}
+											<div class=" w-full">
+												<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
+												<input
+													onkeypress={(e) => {
+														if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
+													}}
+													oninput={(e) => {
+														if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
+															e.currentTarget.value = 0;
+														}
+													}}
+													onpaste={(e) => {
+														if (
+															e.clipboardData.includes('e') ||
+															window.clipboardData.get('text').includes('e')
+														) {
+															e.currentTarget.value = 0;
+															e.preventDefault();
+														}
+													}}
+													type={inputfield.type}
+													name={inputfield.name}
+													id=""
+													placeholder="eg. 58 "
+													min="0"
+													class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+												/>
+											</div>
+										{:else if inputfield.type == 'date'}
+											<div class=" w-full">
+												<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
+												<input
+													type="date"
+													name={inputfield.name}
+													id=""
+													placeholder="eg. 58 piece"
+													min="0"
+													class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+												/>
+											</div>
+										{:else}
+											<div class="w-full">
+												<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
+												<input
+													type="text"
+													name=""
+													id=""
+													placeholder="eg. red"
+													class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+												/>
+											</div>
+										{/if}
+									{/each}
 								</div>
+								<!-- variant img -->
 								<div class="h-fit w-fit">
-									{#if variant_img && variant_img[0]}
+									{#if new_variant.img && new_variant.img[0]}
 										<div class="relative h-fit w-fit">
 											<img
-												src={URL.createObjectURL(variant_img[0])}
+												src={URL.createObjectURL(new_variant.img[0])}
 												alt=""
 												class=" h-23 w-23 rounded-2xl border-1 border-gray-300 object-cover"
 											/>
@@ -672,7 +696,7 @@
 											<button
 												type="button"
 												onclick={() => {
-													variant_img = null;
+													new_variant.img = null;
 												}}
 												class="absolute -top-2 -right-2 h-6 w-6 cursor-pointer rounded-full bg-white p-1 hover:bg-gray-200"
 											>
@@ -717,7 +741,7 @@
 											<span class="text-muted-foreground mt-1 text-xs text-gray-500">Add Image</span
 											>
 											<input
-												bind:files={variant_img}
+												bind:files={new_variant.img}
 												class="border-input bg-background ring-offset-background file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring hidden h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 												id="category-image-upload"
 												accept="image/*"
@@ -727,13 +751,13 @@
 									{/if}
 								</div>
 							</div>
-
+							<!-- cancel and add buttons -->
 							<div class="flex w-full items-center justify-end gap-4 px-2 py-2">
 								<button
 									onclick={() => {
 										adding_new_variant = false;
-										varaint_stock = null;
-										variant_img = null;
+										new_variant.stock = null;
+										new_variant.img = null;
 									}}
 									type="button"
 									class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
@@ -743,12 +767,21 @@
 								<button
 									onclick={() => {
 										variants.push({
-											img: variant_img || null,
-											stock: varaint_stock || null
+											img: new_variant.img || null,
+											stock: new_variant.stock || null
 										});
 										adding_new_variant = false;
-										varaint_stock = null;
-										variant_img = null;
+										new_variant.stock = null;
+										new_variant.img = null;
+										for (let i = 0; i < def.length; i++) {
+											if (def[i].type === 'yes/no') {
+												let x = document.getElementsByName(def[i].name)[0];
+												console.log(x.checked);
+											} else {
+												let x = document.getElementsByName(def[i].name)[0];
+												console.log(x.value);
+											}
+										}
 									}}
 									type="button"
 									class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"

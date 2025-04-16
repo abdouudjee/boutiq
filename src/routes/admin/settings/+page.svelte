@@ -51,21 +51,27 @@
 </div>
 <div class="flex h-fit w-full items-center justify-center gap-2 rounded-lg bg-gray-100 p-4">
 	<button
-		onclick={(selected = 'store')}
+		onclick={() => {
+			selected = 'store';
+		}}
 		class={[
 			'flex w-full cursor-pointer flex-wrap items-center justify-center rounded-lg py-2  font-medium ',
 			selected == 'store' ? 'bg-white text-black ' : 'text-gray-500 '
 		]}>store</button
 	>
 	<button
-		onclick={(selected = 'shipping')}
+		onclick={() => {
+			selected = 'shipping';
+		}}
 		class={[
 			'flex w-full cursor-pointer flex-wrap items-center justify-center rounded-lg py-2 font-medium',
 			selected == 'shipping' ? 'bg-white text-black' : 'text-gray-500'
 		]}>shipping</button
 	>
 	<button
-		onclick={(selected = 'admins')}
+		onclick={() => {
+			selected = 'admins';
+		}}
 		class={[
 			'flex w-full cursor-pointer flex-wrap items-center justify-center rounded-lg py-2 font-medium',
 			selected == 'admins' ? 'bg-white text-black' : 'text-gray-500'

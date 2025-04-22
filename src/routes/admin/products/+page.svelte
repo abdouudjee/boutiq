@@ -1,6 +1,7 @@
 <script>
 	import { supabase } from '$lib/index.js';
-	import { category_row, product_row } from '$lib/tablerow.svelte';
+	import { category_row } from '$lib/tablerow.svelte';
+	import Product from '$lib/rows/product.svelte';
 	import { onMount } from 'svelte';
 	let add_product_form = $state(false);
 	$effect(() => {
@@ -18,13 +19,7 @@
 		stock: null
 	});
 	// selected tab
-	let selected = $state('variants');
-
-	let price = $state();
-	$effect(() => {
-		price = price + '';
-		price.replace(/[eE]/g, '');
-	});
+	let selected = $state('product');
 	let menuopen = $state(false);
 	let selected_category = $state('');
 	let has_variants = $state(true);
@@ -117,20 +112,20 @@
 	</thead>
 	<tbody class="">
 		{#each products as product}
-			{@render product_row({
-				name: product.name,
-				img: product.image_url,
-				category: product.category_id,
-				price: product.selling_price,
-				inventory: product.initial_stock
-			})}
+			<Product
+				name={product.name}
+				img={product.img_url[0]}
+				inventory={product.initial_stock}
+				price={product.selling_price}
+				category={product.category_id}
+			/>
 		{/each}
 	</tbody>
 </table>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<!-- new category form -->
+<!-- new product form -->
 <div
 	onclick={() => {
 		add_product_form = false;

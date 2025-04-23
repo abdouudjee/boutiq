@@ -2,7 +2,7 @@
 	import { supabase } from '$lib/index';
 	import { onMount, tick } from 'svelte';
 
-	let { name, img, selling_price, buying_price, inventory, category_id, description, id, images } =
+	let { name, selling_price, buying_price, inventory, category_id, description, id, images } =
 		$props();
 	let category = $state();
 	let urls = $state(images);
@@ -38,7 +38,6 @@
 	let menuopen = $state(false);
 	let edited_product = $state({
 		name,
-		img,
 		buying_price,
 		selling_price,
 		inventory,
@@ -51,13 +50,17 @@
 		img: null,
 		stock: null
 	});
+	// delete variant vars
+	let confirm_delete_variant = $state(false);
+	let delete_confirmation_input_variant = $state('');
+	let variant_id_to_delete = $state();
 </script>
 
 <tr>
 	<td class="border-b-2 border-b-gray-300 px-4 py-2">
 		<img
 			id={name}
-			src={img || '/placeholder.svg'}
+			src={urls ? urls[0] : ('' ?? '/placeholder.svg')}
 			onerror={() => {
 				document.getElementById(name).src = '/placeholder.svg';
 			}}
@@ -156,7 +159,7 @@
 		</div>
 	</td>
 </tr>
-<!-- delete ui -->
+<!-- delete product ui -->
 {#if confirm_delete}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -210,13 +213,21 @@
 			<!-- cancel and delete buttons -->
 			<div class="flex w-full items-center justify-end gap-4 py-2">
 				<button
+					onclick={() => {
+						delete_confirmation_input = '';
+						confirm_delete = false;
+					}}
 					type="button"
 					class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
 					>cancel</button
 				>
-				<!-- change into submit later !!! -->
 				<button
 					disabled={delete_confirmation_input !== 'delete this product'}
+					onclick={async () => {
+						const { error } = await supabase.from('products').delete().eq('id', id);
+						delete_confirmation_input = '';
+						confirm_delete = false;
+					}}
 					type="button"
 					class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-red-500 px-4 py-2 text-base font-medium text-white hover:bg-red-600 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed disabled:bg-red-300"
 					>delete product
@@ -228,7 +239,7 @@
 <!-- edit ui -->
 {#if edit_page}
 	<div
-		class="absolute inset-0 z-20 flex h-screen w-screen flex-col items-center justify-start bg-white"
+		class="fixed inset-0 z-20 flex min-h-screen w-screen flex-col items-center justify-start overflow-auto bg-white"
 	>
 		<div
 			class="mb-10 flex h-24 w-full items-center justify-between gap-2 border-b-2 border-b-gray-300 bg-white px-10 py-4"
@@ -290,7 +301,7 @@
 				]}>variants</button
 			>
 		</div>
-		<div class="flex w-full flex-col items-center justify-center px-4 py-4">
+		<div class="relative flex h-fit w-full flex-col items-center justify-center px-4 py-4">
 			{#if tab == 'basic info'}
 				<div
 					class="flex w-3/5 flex-col items-center justify-start gap-4 rounded-2xl border-1 border-gray-300 py-4"
@@ -381,8 +392,8 @@
 							placeholder="enter category description"
 							class="mt-2 h-20 w-full rounded-lg border-2 border-gray-300 text-left ring-0"
 							style=" 
-			scroll-behavior: smooth;
-			scrollbar-width: none;"
+				scroll-behavior: smooth;
+				scrollbar-width: none;"
 						>
 						</textarea>
 					</div>
@@ -481,7 +492,7 @@
 											console.error('Delete error:', error.message);
 										} else {
 											urls = urls.filter((u) => u !== img);
-											await supabase.from('products').update({ "img_url": urls }).eq('id', id);
+											await supabase.from('products').update({ img_url: urls }).eq('id', id);
 										}
 									}}
 									class="absolute -top-2 -right-2 h-6 w-6 cursor-pointer rounded-full bg-white p-1 hover:bg-gray-200"
@@ -644,6 +655,7 @@
 										<div class="flex items-center justify-between">
 											<!-- svelte-ignore a11y_consider_explicit_label -->
 											<button
+												onclick={() => {}}
 												class=" flex size-9 cursor-pointer items-center justify-center rounded-lg bg-white p-1 text-sm font-semibold hover:bg-gray-200 active:scale-95"
 											>
 												<svg
@@ -665,6 +677,10 @@
 											<!-- svelte-ignore a11y_consider_explicit_label -->
 
 											<button
+												onclick={() => {
+													confirm_delete_variant = true;
+													variant_id_to_delete = variant.id;
+												}}
 												class=" flex size-9 cursor-pointer items-center justify-center rounded-lg bg-white p-1 text-sm font-semibold hover:bg-gray-200 active:scale-95"
 											>
 												<svg
@@ -792,7 +808,7 @@
 												type="number"
 												name={inputfield.name}
 												id=""
-												placeholder="eg. 58 "
+												placeholder={inputfield.default}
 												min="0"
 												class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 											/>
@@ -804,7 +820,7 @@
 												type="date"
 												name={inputfield.name}
 												id=""
-												placeholder="eg. 58 piece"
+												placeholder={inputfield.default}
 												min="0"
 												class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 											/>
@@ -816,7 +832,7 @@
 												type="text"
 												name={inputfield.name}
 												id=""
-												placeholder="eg. red"
+												placeholder={inputfield.default}
 												class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
 											/>
 										</div>
@@ -929,6 +945,91 @@
 					{/if}
 				</div>
 			{/if}
+		</div>
+	</div>
+{/if}
+<!-- delete variant ui -->
+{#if confirm_delete_variant}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div
+		class="absolute inset-0 z-20 flex h-screen w-screen items-center justify-center bg-black/50"
+		onclick={(confirm_delete_variant = false)}
+	>
+		<div
+			class="flex h-85 w-140 flex-col items-center justify-center gap-3 rounded-2xl bg-white px-10 py-5"
+			onclick={(e) => {
+				e.stopImmediatePropagation();
+			}}
+		>
+			<div class="flex h-10 w-full items-center justify-start gap-3.5">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="#fb2c36"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
+					></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg
+				>
+				<p class="w-full text-xl font-bold text-red-500">Delete variant</p>
+			</div>
+			<!-- warning -->
+			<div class="flex flex-col items-center justify-center gap-1 rounded-2xl">
+				<p class="text-justify text-base tracking-tight text-gray-500">
+					By confirming, you agree to permanently delete this variant of <span
+						class="text-lg font-medium text-black/70">{name}</span
+					>
+					and all associated data, including revenue analytics and sales history.
+					<span class=""> This action is irreversible and cannot be undone. </span>
+				</p>
+			</div>
+			<div class="flex w-full flex-col gap-1">
+				<label for="" class="font-medium tracking-wide text-red-500">Confirmation</label>
+				<input
+					bind:value={delete_confirmation_input_variant}
+					type="text"
+					name=""
+					id=""
+					placeholder={'Type "delete this variant" to confirm'}
+					class="w-full rounded-md border-2 border-red-500 px-2 py-1.5 ring-red-600 placeholder:text-gray-500 focus:border-red-400 focus:ring-2 focus:outline-none"
+				/>
+			</div>
+
+			<!-- cancel and delete buttons -->
+			<div class="flex w-full items-center justify-end gap-4 py-2">
+				<button
+					onclick={() => {
+						delete_confirmation_input_variant = '';
+						confirm_delete_variant = false;
+						variant_id_to_delete = null;
+					}}
+					type="button"
+					class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
+					>cancel</button
+				>
+				<button
+					disabled={delete_confirmation_input_variant !== 'delete this variant'}
+					onclick={async () => {
+						const { error } = await supabase
+							.from('product_variants')
+							.delete()
+							.eq('product_id', id)
+							.eq('id', variant_id_to_delete);
+						delete_confirmation_input_variant = '';
+						confirm_delete_variant = false;
+						variants = variants.filter((v) => v.id !== variant_id_to_delete);
+						variant_id_to_delete = null;
+					}}
+					type="button"
+					class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-red-500 px-4 py-2 text-base font-medium text-white hover:bg-red-600 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed disabled:bg-red-300"
+					>delete product
+				</button>
+			</div>
 		</div>
 	</div>
 {/if}

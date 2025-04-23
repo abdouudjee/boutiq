@@ -14,3 +14,11 @@
     --color-gray:#E7E7E7;
     --font-sans:'poppins', sans-serif;
 }
+
+* {
+	-ms-overflow-style: auto;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}

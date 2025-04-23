@@ -112,7 +112,6 @@
 			<Product
 				id={product.id}
 				name={product.name}
-				img={product.img_url[0]}
 				inventory={product.initial_stock}
 				selling_price={product.selling_price}
 				buying_price={product.buying_price}

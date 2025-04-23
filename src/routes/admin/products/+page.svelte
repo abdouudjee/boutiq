@@ -40,7 +40,6 @@
 		categories = data;
 		let { data: productslist, error: products_err } = await supabase.from('products').select('*');
 		products = productslist;
-		console.log(productslist);
 	});
 	function empty() {
 		adding_new_variant = false;
@@ -111,6 +110,7 @@
 	<tbody class="">
 		{#each products as product}
 			<Product
+				id={product.id}
 				name={product.name}
 				img={product.img_url[0]}
 				inventory={product.initial_stock}
@@ -118,6 +118,7 @@
 				buying_price={product.buying_price}
 				category_id={product.category_id}
 				description={product.description}
+				images={product.img_url}
 			/>
 		{/each}
 	</tbody>

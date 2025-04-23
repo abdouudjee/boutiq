@@ -2,14 +2,17 @@
 	import { supabase } from '$lib/index';
 	import { onMount, tick } from 'svelte';
 
-	let { name, img, selling_price, buying_price, inventory, category_id, description } = $props();
+	let { name, img, selling_price, buying_price, inventory, category_id, description, id, images } =
+		$props();
 	let category = $state();
+	let urls = $state(images);
 	// delete vars
 	let open = $state(false);
 	let dropdown = $state();
 	let confirm_delete = $state(false);
 	let delete_confirmation_input = $state('');
 	$effect(() => {
+		window.scrollTo({ top: 0, behavior: 'instant' });
 		confirm_delete || edit_page
 			? (document.body.style.overflow = 'hidden')
 			: (document.body.style.overflow = 'auto');
@@ -23,7 +26,10 @@
 		category = cat[0].name;
 		def = cat[0].definition;
 
-		let { data: product_variants, error: y } = await supabase.from('product_variants').select('*');
+		let { data: product_variants, error: y } = await supabase
+			.from('product_variants')
+			.select('*')
+			.eq('product_id', id);
 		variants = product_variants;
 	});
 	// edit vars
@@ -37,13 +43,6 @@
 		selling_price,
 		inventory,
 		description
-	});
-	$effect(() => {
-		console.log(edited_product);
-	});
-	let images = $state([]);
-	$effect(() => {
-		console.log(images);
 	});
 	// variant vars
 	let variants = $state([]);
@@ -468,7 +467,7 @@
 					class="flex w-3/5 flex-col items-center justify-start gap-4 rounded-2xl border-1 border-gray-300 px-2 py-4"
 				>
 					<div class="flex w-full flex-wrap items-center justify-start gap-4 px-2 py-2">
-						{#each images as img, index}
+						{#each urls as img, index}
 							<div class="relative h-fit w-fit">
 								<!-- svelte-ignore a11y_consider_explicit_label -->
 								<button
@@ -498,7 +497,7 @@
 										? URL.createObjectURL(img)
 										: (img ?? '/placeholder.svg')}
 									alt=""
-									class=" h-23 w-23 rounded-md border-1 border-gray-300 object-cover"
+									class=" h-23 w-23 rounded-md border-1 border-gray-300 object-cover p-2"
 								/>
 							</div>
 						{/each}
@@ -528,10 +527,48 @@
 								</svg>
 								<span class="text-muted-foreground mt-1 text-xs text-gray-500">Add Image</span>
 								<input
-									onchange={(e) => {
+									onchange={async (e) => {
 										if (e.target.files[0]) {
+											const file = e.target.files[0];
 											e.target.value = '';
-											images.push(e.target.files[0]);
+
+											// Generate clean file path
+											let filepath = `${name.trim().replace(/"/g, '').replace(/\s+/g, '-').toLowerCase()}-${urls.length}.png`;
+
+											// Upload file
+											const { data: upload, error: uploadError } = await supabase.storage
+												.from('products-images')
+												.upload(filepath, file);
+
+											if (uploadError) {
+												alert(uploadError.message);
+												console.log(uploadError);
+												return;
+											}
+
+											// Get public URL
+											const { data: urlData, error: urlError } = supabase.storage
+												.from('products-images')
+												.getPublicUrl(upload.path); // use `upload.path`, not `fullPath`
+
+											if (urlError) {
+												console.log(urlError);
+												return;
+											}
+
+											const publicUrl = urlData.publicUrl;
+											urls.push(publicUrl);
+
+											// Update DB
+											const { data: updated, error: updateError } = await supabase
+												.from('products')
+												.update({ img_url: urls }) // Make sure img_url is a text[] column
+												.eq('id', id)
+												.select();
+
+											if (updateError) {
+												console.log(updateError);
+											}
 										}
 									}}
 									class="border-input bg-background ring-offset-background file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring hidden h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
@@ -559,7 +596,7 @@
 				</div>
 			{:else if tab == 'variants'}
 				<div
-					class="fit flex w-3/5 flex-col items-center justify-start gap-4 rounded-2xl border-1 border-gray-300 px-2 py-4"
+					class=" flex w-fit min-w-3/5 flex-col items-center justify-start gap-4 rounded-2xl border-1 border-gray-300 px-2 py-4"
 				>
 					<table class="mx-auto w-fit">
 						{#if variants.length}
@@ -593,9 +630,10 @@
 									>
 									<td class="w-25 p-2 text-left">{variant.stock ?? '0'}</td>
 									{#each def as td}
-										<td class="w-25 p-2 text-left">{variant[td.name] ?? '-'}</td>
+										<td class="w-25 p-2 text-left">{variant.specific_attributes[td.name] ?? '-'}</td
+										>
 									{/each}
-									<td class="w-25 p-2">
+									<td class="w- p-2">
 										<div class="flex items-center justify-between">
 											<!-- svelte-ignore a11y_consider_explicit_label -->
 											<button

@@ -472,8 +472,17 @@
 								<!-- svelte-ignore a11y_consider_explicit_label -->
 								<button
 									type="button"
-									onclick={() => {
-										new_product.imgs = new_product.imgs.filter((_, i) => i !== index);
+									onclick={async () => {
+										const path = img.split('/products-images/')[1];
+										const { data, error } = await supabase.storage
+											.from('products-images')
+											.remove([path]);
+										if (error) {
+											console.error('Delete error:', error.message);
+										} else {
+											urls = urls.filter((u) => u !== img);
+											await supabase.from('products').update({ "img_url": urls }).eq('id', id);
+										}
 									}}
 									class="absolute -top-2 -right-2 h-6 w-6 cursor-pointer rounded-full bg-white p-1 hover:bg-gray-200"
 								>
@@ -493,9 +502,7 @@
 									>
 								</button>
 								<img
-									src={img instanceof File || img instanceof Blob
-										? URL.createObjectURL(img)
-										: (img ?? '/placeholder.svg')}
+									src={img ?? '/placeholder.svg'}
 									alt=""
 									class=" h-23 w-23 rounded-md border-1 border-gray-300 object-cover p-2"
 								/>

@@ -38,9 +38,7 @@
 	onMount(async () => {
 		let { data, error: categories_err } = await supabase.from('categories').select('*');
 		categories = data;
-		let { data: productslist, error: products_err } = await supabase
-			.from('products')
-			.select('name,img_url,selling_price,initial_stock,category_id');
+		let { data: productslist, error: products_err } = await supabase.from('products').select('*');
 		products = productslist;
 		console.log(productslist);
 	});
@@ -116,8 +114,10 @@
 				name={product.name}
 				img={product.img_url[0]}
 				inventory={product.initial_stock}
-				price={product.selling_price}
-				category={product.category_id}
+				selling_price={product.selling_price}
+				buying_price={product.buying_price}
+				category_id={product.category_id}
+				description={product.description}
 			/>
 		{/each}
 	</tbody>

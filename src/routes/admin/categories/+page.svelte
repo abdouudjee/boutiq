@@ -1,7 +1,8 @@
 <script>
-	import { category_row } from '$lib/tablerow.svelte';
-	import { Category } from '$lib/data_structers';
-	let add_category_form = $state(true);
+	import { CategoryClass } from '$lib/data_structers';
+	import Category from '$lib/rows/category.svelte';
+	import { supabase } from '$lib/index.js';
+	let add_category_form = $state(false);
 	$effect(() => {
 		add_category_form
 			? (document.body.style.overflow = 'hidden')
@@ -22,6 +23,13 @@
 	let type = $state(null);
 
 	let menuopen = $state(false);
+
+	// fetching categories
+	let categories = $state([]);
+	$effect(async () => {
+		const { data: cats, error } = await supabase.from('categories').select('*');
+		categories = cats;
+	});
 </script>
 
 <div
@@ -52,33 +60,22 @@
 </div>
 <table
 	cellspacing="0"
-	class="w-full border-separate rounded-t-2xl border-2 border-b-0 border-gray-300 bg-white text-left"
+	class="mb-3 w-full border-separate rounded-t-2xl border-2 border-b-0 border-gray-300 bg-white text-left"
 >
 	<thead class="border-separate rounded-t-2xl">
 		<tr class="rounded-t-2xl border-b-1 border-b-gray-300">
 			<th class="w-10 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">image</th>
 			<th class="border-b-2 border-b-gray-300 px-4 py-2">category </th>
+			<th class=" border-b-2 border-b-gray-300 px-4 py-2">definition</th>
 			<th class=" border-b-2 border-b-gray-300 px-4 py-2">description</th>
 			<th class="w-40 border-b-2 border-b-gray-300 px-4 py-2">products</th>
 			<th class="w-15 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"></th>
 		</tr>
 	</thead>
 	<tbody class="">
-		{@render category_row({
-			name: 'electronics',
-			description: 'electronic devices and gadgets',
-			products_count: 10
-		})}
-		{@render category_row({
-			name: 'clothing',
-			description: 'clothing and apparel',
-			products_count: 20
-		})}
-		{@render category_row({
-			name: 'home appliances',
-			description: 'home appliances and gadgets',
-			products_count: 15
-		})}
+		{#each categories as category}
+			<Category {category} />
+		{/each}
 	</tbody>
 </table>
 
@@ -449,7 +446,7 @@
 						for (let i = 0; i < custom_fields.length; i++) {
 							definition[i] = custom_fields[i];
 						}
-						const new_category = new Category(
+						const new_category = new CategoryClass(
 							category_name,
 							category_description,
 

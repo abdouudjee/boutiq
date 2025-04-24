@@ -1,6 +1,5 @@
 <script>
 	import { supabase } from '$lib/index.js';
-	import { category_row } from '$lib/tablerow.svelte';
 	import Product from '$lib/rows/product.svelte';
 	import { onMount } from 'svelte';
 	let add_product_form = $state(false);

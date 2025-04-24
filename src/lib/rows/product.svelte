@@ -26,7 +26,7 @@
 		categories = data;
 		category = cat[0].name;
 		def = cat[0].definition;
-
+		edited_product.category = category;
 		let { data: product_variants, error: y } = await supabase
 			.from('product_variants')
 			.select('*')
@@ -45,7 +45,9 @@
 		buying_price,
 		selling_price,
 		inventory,
-		description
+		description,
+		// svelte-ignore state_referenced_locally
+		category
 	});
 	// variant vars
 	let variants = $state([]);
@@ -171,7 +173,7 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
-		class="absolute inset-0 z-20 flex h-screen w-screen items-center justify-center bg-black/50"
+		class="fixed inset-0 z-20 flex h-screen w-screen items-center justify-center bg-black/50"
 		onclick={(confirm_delete = false)}
 	>
 		<div
@@ -470,6 +472,12 @@
 						>
 						<!-- change into submit later !!! -->
 						<button
+							disabled={name === edited_product.name &&
+								buying_price === edited_product.buying_price &&
+								selling_price === edited_product.selling_price &&
+								inventory === edited_product.inventory &&
+								description === edited_product.description &&
+								category === edited_product.category}
 							onclick={async () => {
 								const found = categories.find((item) => item.name === edited_product.category);
 								if (found) {
@@ -498,9 +506,10 @@
 										.eq('id', id)
 										.select();
 								}
+								edit_page = false;
 							}}
 							type="button"
-							class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
+							class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95 disabled:bg-gray-600"
 							>save changes
 						</button>
 					</div>

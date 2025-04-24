@@ -55,6 +55,7 @@
 		new_product.stock = null;
 		new_product.category = null;
 		new_product.description = null;
+		add_product_form = false;
 	}
 	function check_basic_info() {
 		return (
@@ -96,7 +97,7 @@
 </div>
 <table
 	cellspacing="0"
-	class="w-full border-separate rounded-t-2xl border-2 border-b-0 border-gray-300 bg-white text-left"
+	class="mb-3 w-full border-separate rounded-t-2xl border-2 border-b-0 border-gray-300 bg-white text-left"
 >
 	<thead class="border-separate rounded-t-2xl">
 		<tr class="rounded-t-2xl border-b-1 border-b-gray-300">

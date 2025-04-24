@@ -22,7 +22,7 @@
 	let def = $state([]);
 	$effect(async () => {
 		let { data: cat, error } = await supabase.from('categories').select('*').eq('id', category_id);
-		let { data, error: x } = await supabase.from('categories').select('name');
+		let { data, error: x } = await supabase.from('categories').select('*');
 		categories = data;
 		category = cat[0].name;
 		def = cat[0].definition;
@@ -38,7 +38,7 @@
 	});
 	// edit vars
 	let edit_page = $state(false);
-	let tab = $state('variants');
+	let tab = $state('basic info');
 	let menuopen = $state(false);
 	let edited_product = $state({
 		name,
@@ -346,7 +346,7 @@
 											menuopen = !menuopen;
 										}}
 									>
-										<span>{category || 'Select a category'}</span>
+										<span>{edited_product.category ?? (category || 'Select a category')}</span>
 										<svg
 											class="-mr-1 size-5 text-gray-400"
 											viewBox="0 0 20 20"
@@ -371,12 +371,7 @@
 												<li
 													onclick={() => {
 														menuopen = false;
-														new_product.category = category.name;
-														def = category.definition;
-														// removing all variants in case the category of the product changed
-														variants = [];
-														// closing the adding new variant subform to reset the inputs
-														adding_new_variant = false;
+														edited_product.category = category.name;
 													}}
 													class="w-full rounded-lg px-5 py-1.5 text-left text-sm hover:bg-gray-100"
 												>
@@ -475,6 +470,35 @@
 						>
 						<!-- change into submit later !!! -->
 						<button
+							onclick={async () => {
+								const found = categories.find((item) => item.name === edited_product.category);
+								if (found) {
+									const { data, error } = await supabase
+										.from('products')
+										.update({
+											name: edited_product.name,
+											buying_price: edited_product.buying_price,
+											selling_price: edited_product.selling_price,
+											initial_stock: edited_product.inventory,
+											description: edited_product.description,
+											category_id: found.id
+										})
+										.eq('id', id)
+										.select();
+								} else {
+									const { data, error } = await supabase
+										.from('products')
+										.update({
+											name: edited_product.name,
+											buying_price: edited_product.buying_price,
+											selling_price: edited_product.selling_price,
+											initial_stock: edited_product.inventory,
+											description: edited_product.description
+										})
+										.eq('id', id)
+										.select();
+								}
+							}}
 							type="button"
 							class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
 							>save changes

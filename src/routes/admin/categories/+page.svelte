@@ -416,7 +416,7 @@
 												adding_new_field = !adding_new_field;
 											}}
 											type="button"
-											class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
+											class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95 disabled:scale-100 disabled:bg-gray-700"
 											>add field
 										</button>
 									</div>
@@ -440,23 +440,33 @@
 				>
 				<!-- change into submit later !!! -->
 				<button
-					disabled={!category_name || !category_img}
-					onclick={() => {
-						let definition = {};
-						for (let i = 0; i < custom_fields.length; i++) {
-							definition[i] = custom_fields[i];
-						}
-						const new_category = new CategoryClass(
-							category_name,
-							category_description,
-
-							definition,
-							category_img
-						);
-						console.log(JSON.stringify(new_category.definition));
+					disabled={!category_name || !category_img || !category_description}
+					onclick={async () => {
+						// uploading the category image to the bucket
+						const { data: upload, error: img_err } = await supabase.storage
+							.from('categories')
+							.upload(`${category_name}.png`, category_img[0]);
+						// getting public url of the category image
+						const { data: url } = supabase.storage.from('categories').getPublicUrl(upload.path);
+						// inserting data into categories table
+						let { data: new_category, error } = await supabase
+							.from('categories')
+							.insert({
+								image_url: url.publicUrl,
+								name: category_name,
+								definition: custom_fields,
+								description: category_description
+							})
+							.select('*');
+						categories.push(new_category[0]);
+						category_img = null;
+						category_name = null;
+						category_description = null;
+						custom_fields = [];
+						add_category_form = false;
 					}}
 					type="button"
-					class="flex cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
+					class="flex cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95 disabled:scale-100 disabled:bg-gray-700"
 					>add category
 				</button>
 			</div>

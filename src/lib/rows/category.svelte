@@ -19,7 +19,6 @@
 			.from('products')
 			.select('*', { count: 'exact', head: true })
 			.eq('category_id', category.id);
-		console.log(category, count, error);
 		products_count = count;
 	});
 	// delete vars

@@ -536,7 +536,7 @@
 											await supabase.from('products').update({ img_url: urls }).eq('id', id);
 										}
 									}}
-									class="absolute -top-2 -right-2 h-6 w-6 cursor-pointer rounded-full bg-white p-1 hover:bg-gray-200"
+									class="absolute -top-2 -right-2 h-8 w-8 cursor-pointer rounded-full bg-white p-1 hover:bg-gray-200"
 								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -556,102 +556,91 @@
 								<img
 									src={img ?? '/placeholder.svg'}
 									alt=""
-									class=" h-23 w-23 rounded-md border-1 border-gray-300 object-cover p-2"
+									class=" h-40 w-40 rounded-md border-1 border-gray-300 object-cover p-2"
 								/>
 							</div>
 						{/each}
-						<div
-							class="flex h-23 w-23 items-center justify-center rounded-md border border-dashed border-gray-300"
-						>
-							<label
-								class="flex h-full w-full cursor-pointer flex-col items-center justify-center text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-								for="category-image-upload"
+						{#if urls.length < 6}
+							<div
+								class="flex h-40 w-40 items-center justify-center rounded-md border border-dashed border-gray-300"
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class="lucide lucide-image-plus text-muted-foreground h-6 w-6 stroke-gray-500"
+								<label
+									class="flex h-full w-full cursor-pointer flex-col items-center justify-center text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+									for="category-image-upload"
 								>
-									<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
-									<line x1="16" x2="22" y1="5" y2="5"></line>
-									<line x1="19" x2="19" y1="2" y2="8"></line>
-									<circle cx="9" cy="9" r="2"></circle>
-									<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
-								</svg>
-								<span class="text-muted-foreground mt-1 text-xs text-gray-500">Add Image</span>
-								<input
-									onchange={async (e) => {
-										if (e.target.files[0]) {
-											const file = e.target.files[0];
-											e.target.value = '';
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="lucide lucide-image-plus text-muted-foreground h-6 w-6 stroke-gray-500"
+									>
+										<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
+										<line x1="16" x2="22" y1="5" y2="5"></line>
+										<line x1="19" x2="19" y1="2" y2="8"></line>
+										<circle cx="9" cy="9" r="2"></circle>
+										<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+									</svg>
+									<span class="text-muted-foreground mt-1 text-xl text-gray-500">Add Image</span>
+									<input
+										onchange={async (e) => {
+											if (e.target.files[0]) {
+												const file = e.target.files[0];
+												e.target.value = '';
 
-											// Generate clean file path
-											let filepath = `${name.trim().replace(/"/g, '').replace(/\s+/g, '-').toLowerCase()}-${urls.length}.png`;
+												// Generate clean file path
+												let filepath = `${name.trim().replace(/"/g, '').replace(/\s+/g, '-').toLowerCase()}-${urls.length}.png`;
 
-											// Upload file
-											const { data: upload, error: uploadError } = await supabase.storage
-												.from('products-images')
-												.upload(filepath, file);
+												// Upload file
+												const { data: upload, error: uploadError } = await supabase.storage
+													.from('products-images')
+													.upload(filepath, file);
 
-											if (uploadError) {
-												alert(uploadError.message);
-												console.log(uploadError);
-												return;
+												if (uploadError) {
+													alert(uploadError.message);
+													console.log(uploadError);
+													return;
+												}
+
+												// Get public URL
+												const { data: urlData, error: urlError } = supabase.storage
+													.from('products-images')
+													.getPublicUrl(upload.path); // use `upload.path`, not `fullPath`
+
+												if (urlError) {
+													console.log(urlError);
+													return;
+												}
+
+												const publicUrl = urlData.publicUrl;
+												urls.push(publicUrl);
+
+												// Update DB
+												const { data: updated, error: updateError } = await supabase
+													.from('products')
+													.update({ img_url: urls }) // Make sure img_url is a text[] column
+													.eq('id', id)
+													.select();
+
+												if (updateError) {
+													console.log(updateError);
+												}
 											}
-
-											// Get public URL
-											const { data: urlData, error: urlError } = supabase.storage
-												.from('products-images')
-												.getPublicUrl(upload.path); // use `upload.path`, not `fullPath`
-
-											if (urlError) {
-												console.log(urlError);
-												return;
-											}
-
-											const publicUrl = urlData.publicUrl;
-											urls.push(publicUrl);
-
-											// Update DB
-											const { data: updated, error: updateError } = await supabase
-												.from('products')
-												.update({ img_url: urls }) // Make sure img_url is a text[] column
-												.eq('id', id)
-												.select();
-
-											if (updateError) {
-												console.log(updateError);
-											}
-										}
-									}}
-									class="border-input bg-background ring-offset-background file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring hidden h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-									id="category-image-upload"
-									accept="image/*"
-									type="file"
-								/>
-							</label>
-						</div>
+										}}
+										class="border-input bg-background ring-offset-background file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring hidden h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+										id="category-image-upload"
+										accept="image/*"
+										type="file"
+									/>
+								</label>
+							</div>
+						{/if}
 					</div>
 					<!-- cancel and save buttons  -->
-					<div class="flex w-full items-center justify-end gap-4 px-4 py-2">
-						<button
-							type="button"
-							class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
-							>cancel</button
-						>
-						<!-- change into submit later !!! -->
-						<button
-							type="button"
-							class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
-							>save changes
-						</button>
-					</div>
 				</div>
 			{:else if tab == 'variants'}
 				<div

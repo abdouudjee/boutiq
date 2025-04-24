@@ -26,7 +26,8 @@
 	let has_variants = $state(true);
 	let new_variant = $state({
 		img: null,
-		stock: null
+		stock: null,
+		specific_attributes: {}
 	});
 	let adding_new_variant = $state(false);
 	let variants = $state([]);
@@ -535,7 +536,7 @@
 							class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
 							>cancel</button
 						>
-						<!-- change into submit later !!! -->
+						<!-- add new product -->
 						<button
 							disabled={!new_product}
 							onclick={async () => {
@@ -547,6 +548,10 @@
 										new_product.specific_attributes[field.name] =
 											field.type === 'yes/no' ? input.checked : input.value;
 									}
+								}
+								if (has_variants) {
+									new_product.stock = 0;
+									for (let i = 0; i < variants.length; i++) new_product.stock += variants[i].stock;
 								}
 								// Upload images and replace local blobs with URLs
 								for (let i = 0; i < new_product.imgs.length; i++) {
@@ -578,7 +583,7 @@
 								const found = categories.find((item) => item.name === new_product.category);
 
 								// inserting the product
-								const { data, error } = await supabase
+								const { data: inserted_product_id, error } = await supabase
 									.from('products')
 									.insert([
 										{
@@ -588,11 +593,60 @@
 											selling_price: new_product.selling_price,
 											specific_attributes: new_product.specific_attributes,
 											img_url: new_product.imgs,
-											category_id: found.id
+											category_id: found.id,
+											initial_stock: new_product.stock
 										}
 									])
-									.select();
+									.select('id');
 								console.log(error);
+								const product_id = inserted_product_id?.[0]?.id;
+								if (product_id) {
+									for (let i = 0; i < variants.length; i++) {
+										// uploading variant images
+										const file = variants[i].img?.[0];
+										if (!file) {
+											alert('upload image for variant', i + 1);
+										}
+										const filepath = `${new_product.name.trim().replace(/"/g, '').replace(/\s+/g, '-').toLowerCase()}-v${i}.png`;
+										const { data: upload, error: uploadError } = await supabase.storage
+											.from('variants')
+											.upload(filepath, file);
+										if (uploadError) {
+											alert(uploadError.message);
+											console.error(uploadError);
+											return;
+										}
+										// Get public URL of uploaded image
+										const { data: urlData, error: urlError } = supabase.storage
+											.from('variants')
+											.getPublicUrl(upload.path);
+
+										if (urlError) {
+											console.error(urlError);
+											return;
+										}
+										const publicUrl = urlData.publicUrl;
+										variants[i].img = publicUrl;
+										// adding variants
+										const { data, error } = await supabase
+											.from('product_variants')
+											.insert([
+												{
+													product_id: product_id,
+													initial_stock: variants[i].stock,
+													img_url: publicUrl,
+													specific_attributes: variants[i].specific_attributes
+												}
+											])
+											.select();
+
+										if (error) {
+											console.error(error);
+											alert('Failed to insert variant.');
+											return;
+										}
+									}
+								}
 								empty(); // Reset form or whatever this does
 							}}
 							type="button"
@@ -650,7 +704,9 @@
 										>
 										<td class="w-15 p-2 text-left">{variant.stock ?? '0'}</td>
 										{#each def as td}
-											<td class="w-15 p-2 text-left">{variant[td.name] ?? '-'}</td>
+											<td class="w-15 p-2 text-left"
+												>{variant.specific_attributes[td.name] ?? '-'}</td
+											>
 										{/each}
 									</tr>
 								{:else}
@@ -871,19 +927,20 @@
 								<button
 									onclick={() => {
 										for (let i = 0; i < def.length; i++) {
-											if (def[i].type === 'yes/no') {
-												let x = document.getElementsByName(def[i].name)[0];
-												new_variant[def[i].name] = x.checked;
-											} else {
-												let x = document.getElementsByName(def[i].name)[0];
-												new_variant[def[i].name] = x.value;
-											}
+											const field = def[i];
+											const input = document.getElementsByName(field.name)[0];
+											if (!input) continue;
+											new_variant.specific_attributes[field.name] =
+												field.type === 'yes/no' ? input.checked : input.value;
 										}
 
 										variants.push({ ...new_variant });
 										adding_new_variant = false;
-										new_variant.stock = null;
-										new_variant.img = null;
+										new_variant = {
+											stock: null,
+											img: null,
+											specific_attributes: {}
+										};
 										console.log(variants);
 									}}
 									type="button"

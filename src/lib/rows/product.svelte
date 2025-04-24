@@ -5,6 +5,7 @@
 	let { name, selling_price, buying_price, inventory, category_id, description, id, images } =
 		$props();
 	let category = $state();
+	let mounted = $state();
 	let urls = $state(images);
 	// delete vars
 	let open = $state(false);
@@ -32,6 +33,9 @@
 			.eq('product_id', id);
 		variants = product_variants;
 	});
+	onMount(() => {
+		mounted = true;
+	});
 	// edit vars
 	let edit_page = $state(false);
 	let tab = $state('variants');
@@ -57,109 +61,111 @@
 	let variant_id_to_delete = $state();
 </script>
 
-<tr>
-	<td class="border-b-2 border-b-gray-300 px-4 py-2">
-		<img
-			id={name}
-			src={urls.length ? urls[0] : '/placeholder.svg'}
-			onerror={() => {
-				document.getElementById(name).src = '/placeholder.svg';
-			}}
-			alt=""
-			class="productimg style-none h-10 w-10 rounded-lg border-2 border-gray-300 bg-gray-300 object-cover"
-		/></td
-	>
-	<td class="border-b-2 border-b-gray-300 px-4 py-2 text-left text-sm">{name}</td>
-	<td class="w-30 border-b-2 border-b-gray-300 px-4 py-2">{selling_price} Dzd</td>
-	<td class="w-20 border-b-2 border-b-gray-300 px-4 py-2">{inventory}</td>
-	<td class="w-40 border-b-2 border-b-gray-300 px-4 py-2 text-sm text-wrap break-words"
-		>{category}</td
-	>
-	<td class="w-30 min-w-25 border-b-2 border-b-gray-300 py-2">
-		<p
-			class={[
-				' mx-auto  w-fit rounded-full  border-1 px-2  py-1 text-sm font-medium',
-				inventory === 0
-					? ' border-red-300 bg-red-200   text-red-700'
-					: inventory < 15
-						? ' border-yellow-300 bg-yellow-200   text-yellow-700'
-						: ' border-green-300  bg-green-200  text-green-700'
-			]}
-		>
-			{inventory === 0 ? 'out of stock' : inventory < 15 ? 'low stock' : 'in stock'}
-		</p>
-	</td>
-	<td class="w-20 border-b-2 border-b-gray-300 px-4 py-2 text-center">
-		<!-- svelte-ignore a11y_consider_explicit_label -->
-		<div class="hs-dropdown relative inline-flex">
-			<button
-				onclick={async () => {
-					if (!open) {
-						open = true;
-						await tick();
-						dropdown?.focus();
-					}
+{#if mounted}
+	<tr>
+		<td class="border-b-2 border-b-gray-300 px-4 py-2">
+			<img
+				id={name}
+				src={urls.length ? urls[0] : '/placeholder.svg'}
+				onerror={() => {
+					document.getElementById(name).src = '/placeholder.svg';
 				}}
-				type="button"
-				class="hs-dropdown-toggle flex size-9 cursor-pointer items-center justify-center rounded-lg bg-white p-1 text-sm font-semibold hover:bg-gray-200 active:scale-95"
-				aria-haspopup="menu"
-				aria-expanded="false"
-				aria-label="Dropdown"
+				alt=""
+				class="productimg style-none h-10 w-10 rounded-lg border-2 border-gray-300 bg-gray-300 object-cover"
+			/></td
+		>
+		<td class="border-b-2 border-b-gray-300 px-4 py-2 text-left text-sm">{name}</td>
+		<td class="w-30 border-b-2 border-b-gray-300 px-4 py-2">{selling_price} Dzd</td>
+		<td class="w-20 border-b-2 border-b-gray-300 px-4 py-2">{inventory}</td>
+		<td class="w-40 border-b-2 border-b-gray-300 px-4 py-2 text-sm text-wrap break-words"
+			>{category}</td
+		>
+		<td class="w-30 min-w-25 border-b-2 border-b-gray-300 py-2">
+			<p
+				class={[
+					' mx-auto  w-fit rounded-full  border-1 px-2  py-1 text-sm font-medium',
+					inventory === 0
+						? ' border-red-300 bg-red-200   text-red-700'
+						: inventory < 15
+							? ' border-yellow-300 bg-yellow-200   text-yellow-700'
+							: ' border-green-300  bg-green-200  text-green-700'
+				]}
 			>
-				<svg
-					class="size-4 flex-none text-gray-600 dark:text-neutral-500"
-					xmlns="http://www.w3.org/2000/svg"
-					width="24"
-					height="24"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle
-						cx="12"
-						cy="19"
-						r="1"
-					/></svg
-				>
-			</button>
-			{#if open}
-				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<div
-					tabindex="0"
-					class="absolute -right-5 z-10 w-35 rounded-xl border-2 border-gray-200 bg-white px-1 py-2"
-					bind:this={dropdown}
-					onblur={() => {
-						setTimeout(() => (open = false), 100);
+				{inventory === 0 ? 'out of stock' : inventory < 15 ? 'low stock' : 'in stock'}
+			</p>
+		</td>
+		<td class="w-20 border-b-2 border-b-gray-300 px-4 py-2 text-center">
+			<!-- svelte-ignore a11y_consider_explicit_label -->
+			<div class="hs-dropdown relative inline-flex">
+				<button
+					onclick={async () => {
+						if (!open) {
+							open = true;
+							await tick();
+							dropdown?.focus();
+						}
 					}}
-					onmousedown={(e) => {
-						e.stopPropagation();
-						dropdown.focus();
-					}}
+					type="button"
+					class="hs-dropdown-toggle flex size-9 cursor-pointer items-center justify-center rounded-lg bg-white p-1 text-sm font-semibold hover:bg-gray-200 active:scale-95"
+					aria-haspopup="menu"
+					aria-expanded="false"
+					aria-label="Dropdown"
 				>
-					<button
-						class="w-full cursor-pointer py-2 text-sm font-medium hover:bg-gray-200"
-						onmousedown={(e) => {
-							e.stopImmediatePropagation();
-							edit_page = true;
-						}}
-						>edit product
-					</button>
-					<button
-						class="w-full cursor-pointer py-2 text-sm font-medium text-red-500 hover:bg-gray-200"
-						onmousedown={(e) => {
-							e.stopImmediatePropagation();
-							confirm_delete = true;
-						}}>delete product</button
+					<svg
+						class="size-4 flex-none text-gray-600 dark:text-neutral-500"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle
+							cx="12"
+							cy="19"
+							r="1"
+						/></svg
 					>
-				</div>
-			{/if}
-		</div>
-	</td>
-</tr>
+				</button>
+				{#if open}
+					<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div
+						tabindex="0"
+						class="absolute -right-5 z-10 w-35 rounded-xl border-2 border-gray-200 bg-white px-1 py-2"
+						bind:this={dropdown}
+						onblur={() => {
+							setTimeout(() => (open = false), 100);
+						}}
+						onmousedown={(e) => {
+							e.stopPropagation();
+							dropdown.focus();
+						}}
+					>
+						<button
+							class="w-full cursor-pointer py-2 text-sm font-medium hover:bg-gray-200"
+							onmousedown={(e) => {
+								e.stopImmediatePropagation();
+								edit_page = true;
+							}}
+							>edit product
+						</button>
+						<button
+							class="w-full cursor-pointer py-2 text-sm font-medium text-red-500 hover:bg-gray-200"
+							onmousedown={(e) => {
+								e.stopImmediatePropagation();
+								confirm_delete = true;
+							}}>delete product</button
+						>
+					</div>
+				{/if}
+			</div>
+		</td>
+	</tr>
+{/if}
 <!-- delete product ui -->
 {#if confirm_delete}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -227,6 +233,7 @@
 					onclick={async () => {
 						const { error } = await supabase.from('products').delete().eq('id', id);
 						delete_confirmation_input = '';
+						mounted = false;
 						confirm_delete = false;
 					}}
 					type="button"

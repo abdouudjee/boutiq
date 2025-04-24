@@ -16,7 +16,8 @@
 		buying_price: null,
 		selling_price: null,
 		category: null,
-		stock: null
+		stock: null,
+		specific_attributes: []
 	});
 	// selected tab
 	let selected = $state('product');
@@ -364,7 +365,7 @@
 									>
 								</button>
 								<img
-									src={URL.createObjectURL(img)}
+									src={URL.createObjectURL(img) ?? '/placeholder.svg'}
 									alt=""
 									class=" h-23 w-23 rounded-md border-1 border-gray-300 object-cover"
 								/>
@@ -422,104 +423,109 @@
 						>
 					</label>
 					{#if !has_variants}
-						<div class="grid h-fit w-full grid-cols-2 gap-2">
-							<!-- product stock -->
-							<div class="flex w-full flex-col gap-1">
-								<label for="" class="font-medium tracking-wide">stock </label>
-								<input
-									bind:value={new_product.stock}
-									onkeypress={(e) => {
-										if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
-									}}
-									oninput={(e) => {
-										if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
-											e.currentTarget.value = 0;
-										}
-									}}
-									onpaste={(e) => {
-										if (
-											e.clipboardData.includes('e') ||
-											window.clipboardData.get('text').includes('e')
-										) {
-											e.currentTarget.value = 0;
-											e.preventDefault();
-										}
-									}}
-									type="number"
-									name=""
-									id=""
-									placeholder="eg. 85 piece"
-									min="0"
-									class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-								/>
+						{#if new_product.category}
+							<div class="grid h-fit w-full grid-cols-2 gap-2">
+								<!-- product stock -->
+								<div class="flex w-full flex-col gap-1">
+									<label for="" class="font-medium tracking-wide">stock </label>
+									<input
+										bind:value={new_product.stock}
+										onkeypress={(e) => {
+											if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
+										}}
+										oninput={(e) => {
+											if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
+												e.currentTarget.value = 0;
+											}
+										}}
+										onpaste={(e) => {
+											if (
+												e.clipboardData.includes('e') ||
+												window.clipboardData.get('text').includes('e')
+											) {
+												e.currentTarget.value = 0;
+												e.preventDefault();
+											}
+										}}
+										type="number"
+										name=""
+										id=""
+										placeholder="eg. 85 piece"
+										min="0"
+										class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+									/>
+								</div>
+								<!-- the rest of category fields here -->
+								{#each def as inputfield}
+									{#if inputfield.type == 'yes/no'}
+										<label class="inline-flex cursor-pointer items-center">
+											<input type="checkbox" class="peer sr-only" name={inputfield.name} />
+											<div
+												class="peer relative h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-black peer-focus:ring-4 peer-focus:ring-gray-600 peer-focus:outline-none after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full"
+											></div>
+											<span class="ms-3 text-sm font-medium text-gray-900">{inputfield.name}</span>
+										</label>
+									{:else if inputfield.type == 'number'}
+										<div class=" flex w-full flex-col gap-1">
+											<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
+											<input
+												onkeypress={(e) => {
+													if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
+												}}
+												oninput={(e) => {
+													if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
+														e.currentTarget.value = 0;
+													}
+												}}
+												onpaste={(e) => {
+													if (
+														e.clipboardData.includes('e') ||
+														window.clipboardData.get('text').includes('e')
+													) {
+														e.currentTarget.value = 0;
+														e.preventDefault();
+													}
+												}}
+												type="number"
+												name={inputfield.name}
+												id=""
+												placeholder={inputfield.default}
+												min="0"
+												class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+											/>
+										</div>
+									{:else if inputfield.type == 'date'}
+										<div class=" flex w-full flex-col gap-1">
+											<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
+											<input
+												type="date"
+												name={inputfield.name}
+												id=""
+												placeholder={inputfield.default}
+												min="0"
+												class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+											/>
+										</div>
+									{:else}
+										<div class="flex w-full flex-col gap-1">
+											<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
+											<input
+												type="text"
+												name={inputfield.name}
+												id=""
+												placeholder={inputfield.default}
+												class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+											/>
+										</div>
+									{/if}
+								{/each}
 							</div>
-							<!-- the rest of category fields here -->
-							{#each def as inputfield}
-								{#if inputfield.type == 'yes/no'}
-									<label class="inline-flex cursor-pointer items-center">
-										<input type="checkbox" class="peer sr-only" name={inputfield.name} />
-										<div
-											class="peer relative h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-black peer-focus:ring-4 peer-focus:ring-gray-600 peer-focus:outline-none after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full"
-										></div>
-										<span class="ms-3 text-sm font-medium text-gray-900">{inputfield.name}</span>
-									</label>
-								{:else if inputfield.type == 'number'}
-									<div class=" flex w-full flex-col gap-1">
-										<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
-										<input
-											onkeypress={(e) => {
-												if (e.key == 'e' || e.key == '-' || e.key == '+') e.preventDefault();
-											}}
-											oninput={(e) => {
-												if (e.currentTarget.value < 0 || e.currentTarget.value.includes('e')) {
-													e.currentTarget.value = 0;
-												}
-											}}
-											onpaste={(e) => {
-												if (
-													e.clipboardData.includes('e') ||
-													window.clipboardData.get('text').includes('e')
-												) {
-													e.currentTarget.value = 0;
-													e.preventDefault();
-												}
-											}}
-											type="number"
-											name={inputfield.name}
-											id=""
-											placeholder="eg. 58 "
-											min="0"
-											class="w-full [appearance:textfield] rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-										/>
-									</div>
-								{:else if inputfield.type == 'date'}
-									<div class=" flex w-full flex-col gap-1">
-										<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
-										<input
-											type="date"
-											name={inputfield.name}
-											id=""
-											placeholder="eg. 58 piece"
-											min="0"
-											class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-										/>
-									</div>
-								{:else}
-									<div class="flex w-full flex-col gap-1">
-										<label for="" class="font-medium tracking-wide">{inputfield.name} </label>
-										<input
-											type="text"
-											name={inputfield.name}
-											id=""
-											placeholder="eg. red"
-											class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
-										/>
-									</div>
-								{/if}
-							{/each}
-						</div>
+						{:else}
+							<p class="font-medium text-gray-500">make sure to choose a category</p>
+						{/if}
 					{/if}
 					<!-- add and cancel product buttons -->
+					<!-- make sure to disable the button if there is no variants ... -->
 					<div class="flex w-full items-center justify-end gap-4 px-2 py-2">
 						<button
 							onclick={() => {
@@ -532,20 +538,62 @@
 						<!-- change into submit later !!! -->
 						<button
 							disabled={!new_product}
-							onclick={() => {
+							onclick={async () => {
 								if (!has_variants) {
 									for (let i = 0; i < def.length; i++) {
-										if (def[i].type === 'yes/no') {
-											let x = document.getElementsByName(def[i].name)[0];
-											new_product[def[i].name] = x.checked;
-										} else {
-											let x = document.getElementsByName(def[i].name)[0];
-											new_product[def[i].name] = x.value;
-										}
+										const field = def[i];
+										const input = document.getElementsByName(field.name)[0];
+										if (!input) continue;
+										new_product.specific_attributes[field.name] =
+											field.type === 'yes/no' ? input.checked : input.value;
 									}
 								}
-								console.log(new_product);
-								empty();
+								// Upload images and replace local blobs with URLs
+								for (let i = 0; i < new_product.imgs.length; i++) {
+									const file = new_product.imgs[i];
+									const fileName = `${new_product.name.trim().replace(/"/g, '').replace(/\s+/g, '-')}-${i}.png`;
+
+									const { data: upload, error: uploadError } = await supabase.storage
+										.from('products-images')
+										.upload(fileName, file);
+
+									if (uploadError) {
+										alert(uploadError.message);
+										console.error(uploadError);
+										return;
+									}
+
+									const { data: urlData, error: urlError } = supabase.storage
+										.from('products-images') // ✅ must be same bucket name
+										.getPublicUrl(upload.path);
+
+									if (urlError) {
+										console.error(urlError);
+										return;
+									}
+
+									// Replace blob with public URL
+									new_product.imgs[i] = urlData.publicUrl;
+								}
+								const found = categories.find((item) => item.name === new_product.category);
+
+								// inserting the product
+								const { data, error } = await supabase
+									.from('products')
+									.insert([
+										{
+											name: new_product.name,
+											description: new_product.description,
+											buying_price: new_product.buying_price,
+											selling_price: new_product.selling_price,
+											specific_attributes: new_product.specific_attributes,
+											img_url: new_product.imgs,
+											category_id: found.id
+										}
+									])
+									.select();
+								console.log(error);
+								empty(); // Reset form or whatever this does
 							}}
 							type="button"
 							class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"

@@ -61,7 +61,7 @@
 	<td class="border-b-2 border-b-gray-300 px-4 py-2">
 		<img
 			id={name}
-			src={urls ? urls[0] : ('' ?? '/placeholder.svg')}
+			src={urls.length ? urls[0] : '/placeholder.svg'}
 			onerror={() => {
 				document.getElementById(name).src = '/placeholder.svg';
 			}}
@@ -637,9 +637,7 @@
 									<td class="w-25 p-2 text-center">{i + 1}</td>
 									<td class="w-25 p-2 text-left"
 										><img
-											src={variant.img && variant.img[0]
-												? URL.createObjectURL(variant.img[0])
-												: (null ?? '/placeholder.svg')}
+											src={variant.img_url ?? '/placeholder.svg'}
 											onerror={() => {
 												this.src = '/placeholder.svg';
 											}}
@@ -921,85 +919,82 @@
 							>
 							<!-- change into submit later !!! -->
 							<button
-							onclick={async () => {
-								// Gather specific attributes from inputs
-								for (let i = 0; i < def.length; i++) {
-									const field = def[i];
-									const input = document.getElementsByName(field.name)[0];
-							
-									if (!input) continue;
-							
-									new_variant.specific_attributes[field.name] =
-										field.type === 'yes/no' ? input.checked : input.value;
-								}
-							
-								// Upload image if present
-								const file = new_variant.img?.[0];
-								if (!file) {
-									alert("Please upload an image.");
-									return;
-								}
-							
-								const filepath = `${name.trim().replace(/"/g, '').replace(/\s+/g, '-').toLowerCase()}-v${variants.length}.png`;
-							
-								const { data: upload, error: uploadError } = await supabase.storage
-									.from('variants')
-									.upload(filepath, file);
-							
-								if (uploadError) {
-									alert(uploadError.message);
-									console.error(uploadError);
-									return;
-								}
-							
-								// Get public URL of uploaded image
-								const { data: urlData, error: urlError } = supabase.storage
-									.from('variants')
-									.getPublicUrl(upload.path);
-							
-								if (urlError) {
-									console.error(urlError);
-									return;
-								}
-							
-								const publicUrl = urlData.publicUrl;
-							
-								// Insert the new variant into DB
-								const { data, error } = await supabase
-									.from('product_variants')
-									.insert([
-										{
-											product_id: id,
-											initial_stock: new_variant.stock,
-											img_url: publicUrl,
-											specific_attributes: new_variant.specific_attributes
-										}
-									])
-									.select();
-							
-								if (error) {
-									console.error(error);
-									alert("Failed to insert variant.");
-									return;
-								}
-							
-								// Update local variant list
-								variants.push({
-									...new_variant,
-									img_url: publicUrl
-								});
-							
-								// Reset form
-								adding_new_variant = false;
-								new_variant = {
-									stock: null,
-									img: null,
-									specific_attributes: {}
-								};
-							
-								console.log("New variants:", variants);
-							}}
-							
+								onclick={async () => {
+									// Gather specific attributes from inputs
+									for (let i = 0; i < def.length; i++) {
+										const field = def[i];
+										const input = document.getElementsByName(field.name)[0];
+										if (!input) continue;
+										new_variant.specific_attributes[field.name] =
+											field.type === 'yes/no' ? input.checked : input.value;
+									}
+
+									// Upload image if present
+									const file = new_variant.img?.[0];
+									if (!file) {
+										alert('Please upload an image.');
+										return;
+									}
+
+									const filepath = `${name.trim().replace(/"/g, '').replace(/\s+/g, '-').toLowerCase()}-v${variants.length}.png`;
+
+									const { data: upload, error: uploadError } = await supabase.storage
+										.from('variants')
+										.upload(filepath, file);
+
+									if (uploadError) {
+										alert(uploadError.message);
+										console.error(uploadError);
+										return;
+									}
+
+									// Get public URL of uploaded image
+									const { data: urlData, error: urlError } = supabase.storage
+										.from('variants')
+										.getPublicUrl(upload.path);
+
+									if (urlError) {
+										console.error(urlError);
+										return;
+									}
+
+									const publicUrl = urlData.publicUrl;
+
+									// Insert the new variant into DB
+									const { data, error } = await supabase
+										.from('product_variants')
+										.insert([
+											{
+												product_id: id,
+												initial_stock: new_variant.stock,
+												img_url: publicUrl,
+												specific_attributes: new_variant.specific_attributes
+											}
+										])
+										.select();
+
+									if (error) {
+										console.error(error);
+										alert('Failed to insert variant.');
+										return;
+									}
+
+									// Update local variant list
+									variants.push({
+										...new_variant,
+										img_url: publicUrl
+									});
+
+									// Reset form
+									adding_new_variant = false;
+									new_variant = {
+										stock: null,
+										img: null,
+										specific_attributes: {}
+									};
+
+									console.log('New variants:', variants);
+								}}
 								type="button"
 								class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
 								>add variant

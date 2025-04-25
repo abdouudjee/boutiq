@@ -25,6 +25,11 @@
 	let delete_confirmation_input = $state(),
 		confirm_delete = $state(false),
 		is_category_deleted = $state(false);
+	// edit vars
+	let name_to_edit = $state(name);
+	let description_to_edit = $state(description),
+		img_to_edit = $state(img);
+	let edit_page = $state(true);
 </script>
 
 {#if !is_category_deleted}
@@ -177,6 +182,108 @@
 					class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-red-500 px-4 py-2 text-base font-medium text-white hover:bg-red-600 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed disabled:bg-red-300"
 					>delete category
 				</button>
+			</div>
+		</div>
+	</div>
+{/if}
+<!-- edit category page  -->
+{#if edit_page}
+	<div
+		class="fixed inset-0 z-20 flex min-h-screen w-screen flex-col items-center justify-start overflow-auto bg-white"
+	>
+		<div
+			class="mb-10 flex h-24 w-full items-center justify-between gap-2 border-b-2 border-b-gray-300 bg-white px-10 py-4"
+		>
+			<div>
+				<h1 class="text-2xl font-bold tracking-wider text-black">edit category:</h1>
+				<p class="text-lg text-gray-400">{name}</p>
+			</div>
+			<button
+				onclick={() => (edit_page = false)}
+				class="flex items-center justify-center gap-2 rounded-lg border-2 border-gray-500 bg-white px-4 py-2 font-medium text-gray-500 transition duration-200 ease-in-out hover:cursor-pointer active:scale-95"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="stroke-gray-500"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg
+				>
+				<p class="hidden lg:block">back to categories</p></button
+			>
+		</div>
+		<div class="flex w-full items-center justify-center">
+			<div class="flex w-3/5 flex-col items-center justify-start px-4 gap-4">
+				<div class="flex w-full flex-col gap-1">
+					<label for="" class="font-medium tracking-wide">category name </label>
+					<input
+						bind:value={name_to_edit}
+						type="text"
+						name=""
+						id=""
+						placeholder="eg. electronics"
+						class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
+					/>
+				</div>
+				<div class="flex w-full flex-col items-start justify-start">
+					<label for="store-description" class="font-medium">category description </label>
+
+					<textarea
+						bind:value={description_to_edit}
+						name="store-description"
+						id=""
+						placeholder="enter category description"
+						class="mt-2 h-20 w-full rounded-lg border-2 border-gray-300 text-left ring-0"
+						style=" 
+				scroll-behavior: smooth;
+				scrollbar-width: none;"
+					>
+					</textarea>
+				</div>
+				<div class="flex w-full items-center justify-start">
+					<div
+						class="flex h-24 w-24 items-center justify-center rounded-md border border-dashed border-gray-300"
+					>
+						{#if img_to_edit}
+							<img src={img_to_edit} alt="" class=" h-full w-full object-cover" />
+						{:else}
+							<label
+								class="flex h-full w-full cursor-pointer flex-col items-center justify-center text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+								for="category-image-upload"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class="lucide lucide-image-plus text-muted-foreground h-6 w-6 stroke-gray-500"
+								>
+									<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
+									<line x1="16" x2="22" y1="5" y2="5"></line>
+									<line x1="19" x2="19" y1="2" y2="8"></line>
+									<circle cx="9" cy="9" r="2"></circle>
+									<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+								</svg>
+								<span class="text-muted-foreground mt-1 text-xs text-gray-500">Add Image</span>
+								<input
+									bind:files={img_to_edit}
+									class="border-input bg-background ring-offset-background file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring hidden h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+									id="category-image-upload"
+									accept="image/*"
+									type="file"
+								/>
+							</label>
+						{/if}
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

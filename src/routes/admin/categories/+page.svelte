@@ -445,7 +445,7 @@
 						// uploading the category image to the bucket
 						const { data: upload, error: img_err } = await supabase.storage
 							.from('categories')
-							.upload(`${category_name}.png`, category_img);
+							.upload(`${category_name}.png`, category_img[0]);
 						// getting public url of the category image
 						const { data: url } = supabase.storage.from('categories').getPublicUrl(upload.path);
 						// inserting data into categories table

@@ -11,6 +11,7 @@
 		if (!category.definition.length) {
 			definition = 'no definition provided';
 		} else {
+			custom_fields_to_edit = category.definition;
 			definition = category.definition.map((i) => {
 				return ` ${i.name}`;
 			});
@@ -28,8 +29,10 @@
 	// edit vars
 	let name_to_edit = $state(name);
 	let description_to_edit = $state(description),
-		img_to_edit = $state(img);
-	let edit_page = $state(true);
+		img_to_edit = $state(),
+		custom_fields_to_edit = $state([]);
+	let edit_page = $state(false);
+	// let new_field = $state({ is_req, def_val, field_name, type });
 </script>
 
 {#if !is_category_deleted}
@@ -49,12 +52,13 @@
 		<td class=" border-b-2 border-b-gray-300 px-4 py-2 text-sm">{definition ?? '-'}</td>
 		<td class=" border-b-2 border-b-gray-300 px-4 py-2 text-sm">{description ?? '-'}</td>
 		<td class="w-20 border-b-2 border-b-gray-300 px-4 py-2">{products_count ?? '-'}</td>
-
 		<td class="w-20 border-b-2 border-b-gray-300 px-4 py-2 text-center">
 			<div class="flex items-center justify-between">
 				<!-- svelte-ignore a11y_consider_explicit_label -->
 				<button
-					onclick={() => {}}
+					onclick={() => {
+						edit_page = true;
+					}}
 					class=" flex size-9 cursor-pointer items-center justify-center rounded-lg bg-white p-1 text-sm font-semibold hover:bg-gray-200 active:scale-95"
 				>
 					<svg
@@ -189,8 +193,9 @@
 <!-- edit category page  -->
 {#if edit_page}
 	<div
-		class="fixed inset-0 z-20 flex min-h-screen w-screen flex-col items-center justify-start overflow-auto bg-white"
+		class="fixed inset-0 z-20 gap-5  flex min-h-screen w-screen flex-col items-center justify-start overflow-auto bg-white"
 	>
+		<!-- headers -->
 		<div
 			class="mb-10 flex h-24 w-full items-center justify-between gap-2 border-b-2 border-b-gray-300 bg-white px-10 py-4"
 		>
@@ -216,8 +221,11 @@
 				<p class="hidden lg:block">back to categories</p></button
 			>
 		</div>
-		<div class="flex w-full items-center justify-center">
-			<div class="flex w-3/5 flex-col items-center justify-start px-4 gap-4">
+		<!-- edit form -->
+		<div
+			class="flex w-full flex-wrap items-center justify-center gap-5 px-2 md:flex-nowrap lg:px-20"
+		>
+			<div class="flex w-full flex-col items-center justify-start gap-4 px-4">
 				<div class="flex w-full flex-col gap-1">
 					<label for="" class="font-medium tracking-wide">category name </label>
 					<input
@@ -245,46 +253,151 @@
 					</textarea>
 				</div>
 				<div class="flex w-full items-center justify-start">
-					<div
-						class="flex h-24 w-24 items-center justify-center rounded-md border border-dashed border-gray-300"
-					>
-						{#if img_to_edit}
-							<img src={img_to_edit} alt="" class=" h-full w-full object-cover" />
-						{:else}
-							<label
-								class="flex h-full w-full cursor-pointer flex-col items-center justify-center text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-								for="category-image-upload"
+					<div class="flex h-28 w-fit items-center justify-center gap-3 rounded-md">
+						<img
+							src={img ?? '/placeholder.svg'}
+							id={name + 'edit'}
+							onerror={(e) => {
+								e.currentTarget.src = '/placeholder.svg';
+							}}
+							onload={(e) => {
+								if (e.currentTarget.naturalWidth === 0 || e.currentTarget.naturalHeight === 0) {
+									e.currentTarget.src = '/placeholder.png';
+								}
+							}}
+							alt="img"
+							class=" h-28 w-28 rounded-md border border-gray-300 object-cover"
+						/>
+						<label
+							class="flex h-fit w-fit cursor-pointer flex-col items-center justify-center rounded-md border-1 border-gray-300 px-2 py-1 text-center text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							for="category-image-upload"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="lucide lucide-image-plus text-muted-foreground h-6 w-6 stroke-gray-500"
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class="lucide lucide-image-plus text-muted-foreground h-6 w-6 stroke-gray-500"
-								>
-									<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
-									<line x1="16" x2="22" y1="5" y2="5"></line>
-									<line x1="19" x2="19" y1="2" y2="8"></line>
-									<circle cx="9" cy="9" r="2"></circle>
-									<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
-								</svg>
-								<span class="text-muted-foreground mt-1 text-xs text-gray-500">Add Image</span>
-								<input
-									bind:files={img_to_edit}
-									class="border-input bg-background ring-offset-background file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring hidden h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-									id="category-image-upload"
-									accept="image/*"
-									type="file"
-								/>
-							</label>
-						{/if}
+								<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
+								<line x1="16" x2="22" y1="5" y2="5"></line>
+								<line x1="19" x2="19" y1="2" y2="8"></line>
+								<circle cx="9" cy="9" r="2"></circle>
+								<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+							</svg>
+							<span class="text-muted-foreground mt-1 text-xs text-nowrap text-gray-500"
+								>change Image</span
+							>
+							<input
+								class="border-input bg-background ring-offset-background file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring hidden h-10 w-full rounded-md border border-dashed px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+								id="category-image-upload"
+								accept="image/*"
+								type="file"
+							/>
+						</label>
 					</div>
 				</div>
 			</div>
+			<div class="flex w-full flex-col items-start justify-center gap-4">
+				<table class="w-full">
+					<thead class="w-full">
+						{#if custom_fields_to_edit.length}
+							<tr class="hover:bg-gray-50">
+								<th class="w-35 px-1 py-2 text-left">name</th>
+								<th class="w-35 px-2 py-2 text-left">type</th>
+								<th class="w-35 px-1 py-2 text-center">default value</th>
+								<th class="w-35 px-1 py-2 text-center">required</th>
+								<th class="w-35 px-1 py-2 text-center"></th>
+							</tr>
+						{:else}
+							<tr class="h-40">
+								<th class="text-cetner" colspan="100%">
+									<p class="text-center text-xl font-medium text-gray-400">
+										this category has no definition fields
+									</p>
+								</th>
+							</tr>
+						{/if}
+					</thead>
+					<tbody>
+						{#each custom_fields_to_edit as field, index}
+							<tr class="hover:bg-gray-50">
+								<td class="w-35 px-1 py-2 text-left">{field.name ?? '-'}</td>
+								<td class="w-35 px-2 py-2 text-left">{field.type ?? '-'}</td>
+								<td class="w-35 px-1 py-2 text-center">{field.def_val ?? '-'}</td>
+								<td class="w-35 px-1 py-2 text-center">{field.is_req ? 'yes' : 'no'}</td>
+								<td class="w-35 px-1 py-2 text-center">
+									<!-- svelte-ignore a11y_consider_explicit_label -->
+									<button
+										onclick={() => {
+											custom_fields_to_edit.splice(index, 1);
+										}}
+										type="button"
+										class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-lg hover:bg-gray-200 active:scale-95"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="24"
+											height="24"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="lucide lucide-trash text-muted-foreground h-4 w-4"
+											><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+											></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg
+										>
+									</button></td
+								>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+				{#if custom_fields_to_edit.length < 6}
+					<button
+						onclick={() => {
+							// adding_new_field = !adding_new_field;
+						}}
+						type="button"
+						class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border-2 border-gray-300 bg-white py-2 font-semibold hover:bg-gray-100"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 20"
+							fill="none"
+							stroke=""
+							stroke-width="3"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="lucide lucide-plus h-5 w-5 stroke-black"
+							><path d="M5 12h14"></path><path d="M12 5v14"></path></svg
+						>
+						add a custom field</button
+					>
+				{/if}
+			</div>
+		</div>
+		<!-- buttons -->
+		<div class="flex w-full items-center justify-center gap-4 px-40 py-2">
+			<button
+				type="button"
+				class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-xl font-medium hover:bg-gray-200 active:scale-95"
+				>cancel</button
+			>
+			<!-- change into submit later !!! -->
+			<button
+				type="button"
+				class="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-xl font-medium text-white hover:bg-gray-800 active:scale-95 disabled:scale-100 disabled:bg-gray-700"
+				>save changes
+			</button>
 		</div>
 	</div>
 {/if}

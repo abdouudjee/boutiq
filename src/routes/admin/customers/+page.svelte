@@ -1,8 +1,14 @@
 <script>
-	import { customer_row } from '$lib/tablerow.svelte';
+	import Customer from '$lib/rows/customer.svelte';
+	import { supabase } from '$lib/index.js';
 	let form = $state(true);
+	let clients = $state([]);
 	$effect(() => {
 		form ? (document.body.style.overflow = 'hidden') : (document.body.style.overflow = 'auto');
+	});
+	$effect(async () => {
+		let { data: clients_list, error } = await supabase.from('clients').select('*');
+		clients = clients_list;
 	});
 </script>
 
@@ -39,37 +45,26 @@
 	<thead class="border-separate rounded-t-2xl">
 		<tr class="rounded-t-2xl border-b-1 border-b-gray-300">
 			<th class=" w-80 rounded-tl-2xl border-b-2 border-b-gray-300 px-4 py-2">Customer</th>
-			<th class=" border-b-2 border-b-gray-300 px-4 py-2 text-left">Orders </th>
-			<th class=" w-25 border-b-2 border-b-gray-300 px-4 py-2">spent</th>
-			<th class=" w-25 border-b-2 border-b-gray-300 px-4 py-2">last Order</th>
-			<th class=" w-25 border-b-2 border-b-gray-300 px-4 py-2 text-center">status</th>
-			<th class=" w-25 rounded-tr-2xl border-b-2 border-b-gray-300 px-4 py-2"></th>
+			<th class=" w-30 border-b-2 border-b-gray-300 px-4 py-2 text-left">Orders </th>
+			<th class=" w-35 border-b-2 border-b-gray-300 px-4 py-2">total spent</th>
+			<th class=" w-35 border-b-2 border-b-gray-300 px-4 py-2">last Order</th>
+			<th class=" w-30 border-b-2 border-b-gray-300 px-4 py-2 text-center">status</th>
+			<th class=" w-30 rounded-tr-2xl border-b-2 border-b-gray-300 px-4 py-2">actions</th>
 		</tr>
 	</thead>
 	<tbody class="">
-		{@render customer_row({
-			name: 'John Doe',
-			email: 'johndoe@gmail.com',
-			orders_count: 5,
-			total_spent: 1500,
-			last_order: '2023-10-01',
-			status: 'active'
-		})}
-		{@render customer_row({
-			name: 'John Doe',
-			email: 'johndoe@gmail.com',
-			orders_count: 5,
-			total_spent: 1500,
-			last_order: '2023-10-01',
-			status: 'inactive'
-		})}
-		{@render customer_row({
-			name: 'John Doe',
-			email: 'johndoe@gmail.com',
-			orders_count: 5,
-			total_spent: 1500,
-			last_order: '2023-10-01',
-			status: 'new'
-		})}
+		{#each clients as client}
+			<Customer customer={client} />{:else}
+			<tr class="h-40">
+				<th class="text-cetner border-b-2 border-b-gray-300" colspan="100%">
+					<div class="flex items-center justify-center gap-2.5 flex-col">
+						<p class="text-center text-xl font-medium text-gray-400">
+							you don't have any customr yet, they will appear here the moment they sign up
+						</p>
+						<p class="text-gray-400 font-medium">or you can add them manually</p>
+					</div>
+				</th>
+			</tr>
+		{/each}
 	</tbody>
 </table>

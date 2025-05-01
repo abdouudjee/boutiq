@@ -302,6 +302,7 @@
 					</div>
 				</div>
 			</div>
+			<!-- custom fields -->
 			<div class="flex w-full flex-col items-start justify-center gap-4">
 				<table class="w-full">
 					<thead class="w-full">

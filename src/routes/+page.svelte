@@ -216,9 +216,9 @@
 		</div>
 	</div>
 </div>
-<dir class="flex w-full items-center justify-center">
+<div class="flex w-full items-center justify-center">
 	<div
-		class="relative mb-10 flex w-256 items-center justify-center gap-5 pb-10 after:absolute after:bottom-0 after:left-2/10 after:h-1 after:w-6/10 after:border-b-2 after:border-b-[#d9d9d9] after:pb-5 after:content-['']"
+		class="relative mb-10 flex w-256 flex-wrap items-center justify-center gap-5 pb-10 after:absolute after:bottom-0 after:left-2/10 after:h-1 after:w-6/10 after:border-b-2 after:border-b-[#d9d9d9] after:pb-5 after:content-[''] lg:flex-nowrap"
 	>
 		<div class="flex h-60 w-130 items-center justify-between rounded-2xl bg-[#F4F4F4]">
 			<div class="flex h-45 w-50 flex-col items-start justify-center gap-2 pl-5">
@@ -241,14 +241,14 @@
 			<img src="image.png" class="h-60 w-60 object-cover" alt="" />
 		</div>
 	</div>
-</dir>
+</div>
 <!-- New products section -->
 <section></section>
 <!-- Frequently asked questions section-->
-<section class="flex h-fit w-full flex-col items-center gap-6 bg-[#F8F8F8] py-20">
-	<div class="flex w-[1040px] flex-col items-start gap-6">
+<section class="flex h-fit w-full flex-col items-center gap-6 bg-[#F8F8F8] px-20 py-20">
+	<div class="flex max-w-256 flex-col items-start justify-start gap-6">
 		<p class=" text-3xl font-bold text-black">Frequently asked questions</p>
-		<div class="flex w-fit flex-wrap items-start justify-start gap-3 py-3">
+		<div class="flex w-fit flex-wrap items-start justify-start gap-3 py-3 lg:flex-nowrap">
 			<div class="flex flex-col items-start justify-start gap-3">
 				<Accordion
 					question={'Is my payment information secure? some bla bla bla'}
@@ -266,10 +266,10 @@
 	</div>
 </section>
 <!-- footer section -->
-<footer class="flex h-fit w-full flex-col items-center gap-6 bg-white py-3 pt-12">
+<footer class="flex h-fit w-full flex-col items-center gap-6 bg-white  py-3 pt-12 pb-12 px-20">
 	<!-- links -->
-	<div class="flex h-44 w-256 items-start gap-6">
-		<div class="flex h-full w-full flex-col items-start justify-between">
+	<div class="flex h-fit max-w-256 flex-wrap items-start gap-6 lg:w-256 lg:flex-nowrap">
+		<div class="flex h-44 w-full flex-col items-start justify-between">
 			<div>
 				<svg
 					width="129"
@@ -356,7 +356,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex h-full w-full items-start justify-between">
+		<div class="flex h-44 w-full items-start justify-between">
 			<div class=" flex flex-col gap-3">
 				<p class=" font-medium text-[#1E1E1E]">links</p>
 				<li class="flex flex-col items-start justify-start gap-1 marker:text-transparent">
@@ -390,15 +390,236 @@
 		</div>
 	</div>
 	<!-- payment methods -->
-	<div></div>
+	<div class="flex items-center gap-3">
+		<div
+			class="flex h-8.5 w-14 items-center justify-center overflow-hidden rounded-lg border-1 border-[#1E1E1E]"
+		>
+			<svg class="size-10" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0,0,256,270">
+				<g
+					fill="none"
+					fill-rule="nonzero"
+					stroke="none"
+					stroke-width="1"
+					stroke-linecap="butt"
+					stroke-linejoin="miter"
+					stroke-miterlimit="10"
+					stroke-dasharray=""
+					stroke-dashoffset="0"
+					font-family="none"
+					font-weight="none"
+					font-size="none"
+					text-anchor="none"
+					style="mix-blend-mode: normal"
+					><g transform="scale(2.13333,2.13333)"
+						><rect x="7" y="96" width="106" height="4" fill="#ffffff" opacity="0.35"></rect><rect
+							x="7"
+							y="24"
+							width="106"
+							height="72"
+							fill="#ffffff"
+						></rect><path
+							d="M77,39c-6.567,0 -12.539,2.535 -17,6.676c-4.461,-4.141 -10.433,-6.676 -17,-6.676c-13.807,0 -25,11.193 -25,25c0,13.807 11.193,25 25,25c6.567,0 12.539,-2.535 17,-6.676c4.461,4.141 10.433,6.676 17,6.676c13.807,0 25,-11.193 25,-25c0,-13.807 -11.193,-25 -25,-25z"
+							fill="#ffffff"
+							opacity="0.35"
+						></path><path
+							d="M52,60c0,-7.24 3.081,-13.758 8,-18.324c-4.461,-4.141 -10.433,-6.676 -17,-6.676c-13.807,0 -25,11.193 -25,25c0,13.807 11.193,25 25,25c6.567,0 12.539,-2.535 17,-6.676c-4.919,-4.566 -8,-11.084 -8,-18.324z"
+							fill="#ff1200"
+						></path><path
+							d="M77,35c-6.567,0 -12.539,2.535 -17,6.676c4.919,4.566 8,11.084 8,18.324c0,7.24 -3.081,13.758 -8,18.324c4.461,4.141 10.433,6.676 17,6.676c13.807,0 25,-11.193 25,-25c0,-13.807 -11.193,-25 -25,-25z"
+							fill="#ffc400"
+						></path><path
+							d="M68,60c0,-7.24 -3.081,-13.758 -8,-18.324c-4.919,4.566 -8,11.084 -8,18.324c0,7.24 3.081,13.758 8,18.324c4.919,-4.566 8,-11.084 8,-18.324z"
+							fill="#ff7500"
+						></path></g
+					></g
+				>
+			</svg>
+		</div>
+		<div
+			class="flex h-8.5 w-14 items-center justify-center overflow-hidden rounded-lg border-1 border-[#1E1E1E] bg-white"
+		>
+			<svg
+				class="size-40"
+				xmlns="http://www.w3.org/2000/svg"
+				x="0px"
+				y="0px"
+				width="100"
+				height="100"
+				viewBox="0,0,256,256"
+			>
+				<defs
+					><radialGradient
+						cx="32"
+						cy="31.5"
+						r="31.259"
+						gradientUnits="userSpaceOnUse"
+						id="color-1_ugDgmU0qYRe3_gr1"
+						><stop offset="0" stop-color="#ffffff"></stop><stop offset="0.35" stop-color="#ffffff"
+						></stop><stop offset="0.907" stop-color="#ffffff"></stop><stop
+							offset="1"
+							stop-color="#ffffff"
+						></stop></radialGradient
+					><linearGradient
+						x1="32"
+						y1="59.085"
+						x2="32"
+						y2="2.012"
+						gradientUnits="userSpaceOnUse"
+						id="color-2_ugDgmU0qYRe3_gr2"
+						><stop offset="0" stop-color="#ffffff"></stop><stop offset="0.085" stop-color="#ffffff"
+						></stop><stop offset="0.606" stop-color="#ffffff"></stop><stop
+							offset="1"
+							stop-color="#ffffff"
+						></stop></linearGradient
+					><linearGradient
+						x1="36.372"
+						y1="12.106"
+						x2="36.372"
+						y2="73.12"
+						gradientUnits="userSpaceOnUse"
+						id="color-3_ugDgmU0qYRe3_gr3"
+						><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#ffffff"
+						></stop></linearGradient
+					><linearGradient
+						x1="43.998"
+						y1="32.702"
+						x2="43.998"
+						y2="45.509"
+						gradientUnits="userSpaceOnUse"
+						id="color-4_ugDgmU0qYRe3_gr4"
+						><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#ffffff"
+						></stop></linearGradient
+					><linearGradient
+						x1="18"
+						y1="-8.506"
+						x2="18"
+						y2="43.928"
+						gradientUnits="userSpaceOnUse"
+						id="color-5_ugDgmU0qYRe3_gr5"
+						><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#ffffff"
+						></stop></linearGradient
+					></defs
+				><g
+					fill="none"
+					fill-rule="nonzero"
+					stroke="none"
+					stroke-width="1"
+					stroke-linecap="butt"
+					stroke-linejoin="miter"
+					stroke-miterlimit="10"
+					stroke-dasharray=""
+					stroke-dashoffset="0"
+					font-family="none"
+					font-weight="none"
+					font-size="none"
+					text-anchor="none"
+					style="mix-blend-mode: normal"
+					><g transform="scale(4,4)"
+						><path
+							d="M58,54c-1.105,0 -2,-0.895 -2,-2c0,-1.105 0.895,-2 2,-2h2.5c1.925,0 3.5,-1.575 3.5,-3.5c0,-1.925 -1.575,-3.5 -3.5,-3.5h-10.5c-1.381,0 -2.5,-1.119 -2.5,-2.5c0,-1.381 1.119,-2.5 2.5,-2.5h8c1.65,0 3,-1.35 3,-3c0,-1.65 -1.35,-3 -3,-3h-16v-6h18c2.335,0 4.22,-2.028 3.979,-4.41c-0.209,-2.076 -2.082,-3.59 -4.168,-3.59h-1.811c-1.105,0 -2,-0.895 -2,-2c0,-1.105 0.895,-2 2,-2h0.357c1.308,0 2.499,-0.941 2.63,-2.242c0.15,-1.497 -1.021,-2.758 -2.487,-2.758h-14c-0.828,0 -1.5,-0.672 -1.5,-1.5c0,-0.828 0.672,-1.5 1.5,-1.5h3.857c1.308,0 2.499,-0.941 2.63,-2.242c0.15,-1.497 -1.021,-2.758 -2.487,-2.758h-32.857c-1.308,0 -2.499,0.941 -2.63,2.242c-0.15,1.497 1.021,2.758 2.487,2.758h3.5c1.105,0 2,0.895 2,2c0,1.105 -0.895,2 -2,2h-12.811c-2.086,0 -3.958,1.514 -4.168,3.59c-0.241,2.382 1.644,4.41 3.979,4.41h2.5c1.933,0 3.5,1.567 3.5,3.5c0,1.933 -1.567,3.5 -3.5,3.5h-3.311c-2.086,0 -3.958,1.514 -4.168,3.59c-0.241,2.382 1.644,4.41 3.979,4.41h17v11h-16c-1.65,0 -3,1.35 -3,3c0,1.65 1.35,3 3,3v0c1.105,0 2,0.895 2,2c0,1.105 -0.895,2 -2,2h-1.811c-2.086,0 -3.958,1.514 -4.168,3.59c-0.241,2.382 1.644,4.41 3.979,4.41h53.811c2.086,0 3.958,-1.514 4.168,-3.59c0.241,-2.382 -1.644,-4.41 -3.979,-4.41z"
+							fill="url(#color-1_ugDgmU0qYRe3_gr1)"
+						></path><path
+							d="M50,12h-36c-2.209,0 -4,1.791 -4,4v36c0,2.209 1.791,4 4,4h36c2.209,0 4,-1.791 4,-4v-36c0,-2.209 -1.791,-4 -4,-4z"
+							fill="url(#color-2_ugDgmU0qYRe3_gr2)"
+						></path><path
+							d="M49.979,12h-14.969l-16.266,44h31.235c2.221,0 4.021,-1.8 4.021,-4.021v-35.958c0,-2.221 -1.8,-4.021 -4.021,-4.021z"
+							fill="url(#color-3_ugDgmU0qYRe3_gr3)"
+						></path><path
+							d="M42.985,43c-0.719,0 -1.425,0.363 -1.743,1.009c-0.744,1.514 0.343,2.991 1.758,2.991c0.55,0 1.05,0.22 1.41,0.59c0.37,0.36 0.59,0.86 0.59,1.41c0,0.55 -0.22,1.05 -0.59,1.41c-0.36,0.37 -0.86,0.59 -1.41,0.59h-6.495c-0.991,0 -1.942,0.559 -2.307,1.48c-0.717,1.808 0.589,3.52 2.302,3.52h13.543c2.185,0 3.957,-1.772 3.957,-3.957v-9.043z"
+							fill="url(#color-4_ugDgmU0qYRe3_gr4)"
+						></path><path
+							d="M32.416,33.839v4.113h-1.305v-10.156h3.46c0.834,-0.017 1.641,0.299 2.241,0.879c0.607,0.546 0.948,1.327 0.936,2.143c0.017,0.821 -0.324,1.608 -0.936,2.156c-0.605,0.577 -1.352,0.865 -2.241,0.865l-2.155,0zM32.416,29.046v3.545h2.188c0.485,0.014 0.954,-0.176 1.291,-0.525c0.685,-0.666 0.701,-1.762 0.034,-2.448c-0.011,-0.012 -0.023,-0.023 -0.034,-0.034c-0.333,-0.356 -0.803,-0.553 -1.291,-0.539l-2.188,0.001z"
+							fill="#000000"
+						></path><path
+							d="M40.754,30.776c0.964,0 1.725,0.258 2.284,0.773c0.558,0.515 0.837,1.222 0.836,2.12v4.283h-1.248v-0.964h-0.056c-0.54,0.794 -1.259,1.191 -2.156,1.191c-0.766,0 -1.406,-0.227 -1.921,-0.681c-0.501,-0.422 -0.785,-1.047 -0.773,-1.702c0,-0.719 0.272,-1.291 0.815,-1.716c0.543,-0.425 1.269,-0.637 2.177,-0.639c0.775,0 1.413,0.142 1.914,0.425v-0.298c0.003,-0.446 -0.195,-0.87 -0.539,-1.155c-0.345,-0.311 -0.795,-0.481 -1.259,-0.476c-0.729,0 -1.305,0.307 -1.73,0.922l-1.149,-0.724c0.631,-0.905 1.567,-1.359 2.805,-1.359zM39.066,35.825c-0.002,0.337 0.159,0.654 0.433,0.851c0.289,0.227 0.647,0.347 1.014,0.34c0.551,-0.001 1.078,-0.22 1.468,-0.609c0.432,-0.407 0.648,-0.884 0.648,-1.432c-0.407,-0.324 -0.974,-0.486 -1.702,-0.486c-0.53,0 -0.972,0.128 -1.326,0.383c-0.357,0.259 -0.535,0.574 -0.535,0.953z"
+							fill="#000000"
+						></path><path
+							d="M51.038,31.003l-4.356,10.012h-1.347l1.617,-3.503l-2.865,-6.509h1.418l2.07,4.992h0.028l2.014,-4.992z"
+							fill="#000000"
+						></path><path
+							d="M23.766,32.953c0,-0.398 -0.033,-0.795 -0.1,-1.186h-5.502v2.247h3.151c-0.13,0.725 -0.551,1.366 -1.165,1.773v1.459h1.881c1.101,-1.016 1.735,-2.518 1.735,-4.293z"
+							fill="#4285f4"
+						></path><path
+							d="M18.164,38.654c1.575,0 2.9,-0.517 3.867,-1.408l-1.881,-1.459c-0.523,0.355 -1.198,0.558 -1.986,0.558c-1.522,0 -2.814,-1.026 -3.275,-2.408h-1.938v1.503c0.99,1.97 3.007,3.214 5.213,3.214z"
+							fill="#34a853"
+						></path><path
+							d="M14.888,33.937c-0.244,-0.724 -0.244,-1.509 0,-2.233v-1.504h-1.938c-0.828,1.648 -0.828,3.591 0,5.24z"
+							fill="#fbbc04"
+						></path><path
+							d="M18.164,29.295c0.832,-0.014 1.636,0.301 2.238,0.875v0l1.665,-1.665c-1.056,-0.992 -2.455,-1.536 -3.903,-1.519c-2.206,0 -4.223,1.244 -5.213,3.215l1.938,1.503c0.461,-1.383 1.753,-2.409 3.275,-2.409z"
+							fill="#ea4335"
+						></path><path
+							d="M25.771,13.446c-0.383,-0.899 -1.312,-1.446 -2.289,-1.446h-5.06h-4.435c-2.202,0 -3.987,1.785 -3.987,3.987v7.804h9.689c0.83,0 1.624,-0.469 1.932,-1.239c0.61,-1.526 -0.491,-2.972 -1.936,-2.972h-1.684c-0.699,0 -1.263,-0.564 -1.263,-1.263c0,-0.699 0.564,-1.263 1.263,-1.263h5.474c1.745,-0.001 3.078,-1.775 2.296,-3.608z"
+							fill="url(#color-5_ugDgmU0qYRe3_gr5)"
+						></path></g
+					></g
+				>
+			</svg>
+		</div>
+		<div class="flex h-8.5 w-14 items-center justify-center rounded-lg border-1 border-[#1E1E1E]">
+			<svg
+				class="size-10"
+				xmlns="http://www.w3.org/2000/svg"
+				x="0px"
+				y="0px"
+				width="100"
+				height="100"
+				viewBox="0 0 50 50"
+			>
+				<path
+					d="M 9.984375 15.001953 C 9.149375 15.041953 8.1182969 15.573313 7.5292969 16.320312 C 6.9892969 16.964312 6.5275313 18.010188 6.6445312 18.992188 C 7.5875313 19.074188 8.5301406 18.500438 9.1191406 17.773438 C 9.6991406 17.026437 10.082375 16.024953 9.984375 15.001953 z M 18 17 L 18 32 L 20.375 32 L 20.375 27 L 23.625 27 C 26.608 27 28.75 24.925 28.75 22 C 28.75 19.075 26.647125 17 23.703125 17 L 18 17 z M 20.375 19 L 23.125 19 C 25.172 19 26.375 20.105 26.375 22 C 26.375 23.895 25.182 25 23.125 25 L 20.375 25 L 20.375 19 z M 9.875 19.5 C 8.5 19.5 7.517 20.25 6.875 20.25 C 6.223 20.25 5.25 19.509766 4.125 19.509766 C 2.75 19.509766 1.4033594 20.372859 0.69335938 21.630859 C -0.76564063 24.145859 0.31460937 27.869016 1.7246094 29.916016 C 2.4156094 30.930016 3.25 32 4.375 32 C 5.406 31.961 5.755 31.375 7 31.375 C 8.254 31.375 8.625 32 9.75 32 C 10.875 32 11.556094 30.969078 12.246094 29.955078 C 13.034094 28.805078 13.356 27.684 13.375 27.625 C 13.356 27.606 11.197734 26.77725 11.177734 24.28125 C 11.158734 22.19525 12.879031 21.200578 12.957031 21.142578 C 11.984031 19.700578 10.375 19.5 10 19.5 L 9.875 19.5 z M 34.199219 21 C 31.710219 21 29.870734 22.395453 29.802734 24.314453 L 31.912109 24.314453 C 32.086109 23.402453 32.948859 22.804688 34.130859 22.804688 C 35.563859 22.804688 36.373047 23.460969 36.373047 24.667969 L 36.375 25.5 L 33.443359 25.654297 C 30.722359 25.815297 29.25 26.908594 29.25 28.808594 C 29.25 30.727594 30.770219 32.001953 32.949219 32.001953 C 34.421219 32.001953 35.78725 31.270328 36.40625 30.111328 L 36.455078 30.111328 L 36.455078 31.886719 L 38.623047 31.886719 L 38.623047 24.515625 C 38.624047 22.376625 36.882219 21 34.199219 21 z M 39.5 21 L 43.507812 31.949219 L 43.292969 32.615234 C 42.930969 33.744234 42.344828 34.177734 41.298828 34.177734 C 41.119828 34.177734 40.781 34.159625 40.625 34.140625 L 40.625 35.945312 C 40.783 35.980313 41.332906 36 41.503906 36 C 43.810906 36 44.896703 35.132047 45.845703 32.498047 L 50 21 L 47.595703 21 L 44.808594 29.884766 L 44.759766 29.884766 L 41.972656 21 L 39.5 21 z M 36.375 27 L 36.367188 27.867188 C 36.367188 29.254188 35.166125 30.242188 33.578125 30.242188 C 32.329125 30.242188 31.535156 29.653953 31.535156 28.751953 C 31.535156 27.820953 32.300672 27.279359 33.763672 27.193359 L 36.375 27 z"
+				></path>
+			</svg>
+		</div>
+		<div class="flex h-8.5 w-14 items-center justify-center rounded-lg border-1 border-[#1E1E1E]">
+			<svg
+				class="size-11"
+				xmlns="http://www.w3.org/2000/svg"
+				x="0px"
+				y="0px"
+				width="100"
+				height="100"
+				viewBox="0,0,256,256"
+			>
+				<g
+					fill="none"
+					fill-rule="nonzero"
+					stroke="none"
+					stroke-width="1"
+					stroke-linecap="butt"
+					stroke-linejoin="miter"
+					stroke-miterlimit="10"
+					stroke-dasharray=""
+					stroke-dashoffset="0"
+					font-family="none"
+					font-weight="none"
+					font-size="none"
+					text-anchor="none"
+					style="mix-blend-mode: normal"
+					><g transform="scale(5.33333,5.33333)"
+						><path
+							d="M45,35c0,2.209 -1.791,4 -4,4h-34c-2.209,0 -4,-1.791 -4,-4v-22c0,-2.209 1.791,-4 4,-4h34c2.209,0 4,1.791 4,4z"
+							fill="#ffffff"
+						></path><path
+							d="M15.186,19l-2.626,7.832c0,0 -0.667,-3.313 -0.733,-3.729c-1.495,-3.411 -3.701,-3.221 -3.701,-3.221l2.6,10.118v-0.002h3.161l4.371,-10.998zM17.689,30h2.871l1.736,-11h-2.907zM38.008,19h-3.021l-4.71,11h2.852l0.588,-1.571h3.596l0.306,1.571h2.613zM34.513,26.328l1.563,-4.157l0.818,4.157zM26.369,22.206c0,-0.606 0.498,-1.057 1.926,-1.057c0.928,0 1.991,0.674 1.991,0.674l0.466,-2.309c0,0 -1.358,-0.515 -2.691,-0.515c-3.019,0 -4.576,1.444 -4.576,3.272c0,3.306 3.979,2.853 3.979,4.551c0,0.291 -0.231,0.964 -1.888,0.964c-1.662,0 -2.759,-0.609 -2.759,-0.609l-0.495,2.216c0,0 1.063,0.606 3.117,0.606c2.059,0 4.915,-1.54 4.915,-3.752c0,-2.661 -3.985,-2.853 -3.985,-4.041z"
+							fill="#2100c4"
+						></path><path
+							d="M12.212,24.945l-0.966,-4.748c0,0 -0.437,-1.029 -1.573,-1.029c-1.136,0 -4.44,0 -4.44,0c0,0 5.661,1.672 6.979,5.777z"
+							fill="#2100c4"
+						></path></g
+					></g
+				>
+			</svg>
+		</div>
+	</div>
 	<!-- line -->
-	<div class="h-0.5 w-256 rounded-full bg-[#888888]"></div>
+	<div class="h-0.5 w-full max-w-256 rounded-full bg-[#888888]"></div>
 	<!-- copyright -->
-	<div class="flex w-256 items-center justify-between">
+	<div class="flex w-full max-w-256 items-center justify-between">
 		<p class="font-medium text-[#1E1E1E]">
 			Copyright © 2025 <span class="text-[#1F66F0]"> Boutiq.</span> All Rights Reserved.
 		</p>
-		<div class="w-fit gap-4 justify-end flex items-center">
+		<div class="flex w-fit items-center justify-end gap-4">
 			<svg
 				width="24"
 				height="24"

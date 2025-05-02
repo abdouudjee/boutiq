@@ -113,7 +113,7 @@
 		</div>
 	</div>
 	<div class="flex h-9 items-center gap-6.5">
-		<div class="bg-smoke flex h-9 w-64 items-center rounded-full border-2 border-[#EFEFEF] px-2.5">
+		<div class="bg-smoke flex justify-center h-9 w-64 items-center rounded-full border-2 border-[#EFEFEF] px-2.5">
 			<input
 				type="text"
 				placeholder="Search..."

@@ -13,14 +13,17 @@
 	<p class="text-lg font-medium text-gray-400">save your favorite items for later</p>
 </div>
 <!-- wishlist items -->
-<div class="flex w-full flex-wrap items-center justify-start gap-3 px-10 py-5">
-	{#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]}
-		<Product />
-	{:else}
-		<div class="flex items-center justify-center w-screen h-100">
-			<p class="font-medium text-gray-400 text-2xl text-wrap text-center">
-				no items saved yet, any saved items will appear here.
-			</p>
-		</div>
-	{/each}
+
+<div class="w-full px-13 py-5">
+	<div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-3">
+		{#each [1, 2, 3, 4, 5, 6, 6, 7, 8, 9, 0, 0, 0, 0] as item}
+			<Product />
+		{:else}
+			<div class="col-span-full flex h-100 w-full items-center justify-center">
+				<p class="text-center text-2xl font-medium text-gray-400">
+					no items saved yet, any saved items will appear here.
+				</p>
+			</div>
+		{/each}
+	</div>
 </div>

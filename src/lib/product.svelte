@@ -17,7 +17,7 @@
 		</button>
 	</div>
 	<div class="flex h-42.5 w-full items-end justify-center">
-		<img src="jeanspant.png" alt="" class="h-33 w-37 object-cover" />
+		<img src="/jeanspant.png" alt="" class="h-33 w-37 object-cover" />
 	</div>
 	<div class="flex w-full flex-col items-start justify-between gap-2.5 p-2">
 		<div class="flex flex-col items-start justify-start gap-1">

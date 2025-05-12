@@ -1,3 +1,7 @@
+<script>
+	import { bars, pie } from '$lib/actions/charts.svelte';
+</script>
+
 <div
 	class="sticky top-0 z-10 flex h-24 w-full flex-col items-start justify-start gap-2 border-b-2 border-b-gray-300 bg-white py-4"
 >
@@ -126,10 +130,51 @@
 	</div>
 </div>
 <!-- overview with charts i'll make it later -->
-<div></div>
+<div class="flex h-fit w-full flex-wrap items-start gap-3">
+	<div class="w-210 rounded-2xl border-2 border-gray-300 p-5">
+		<canvas
+			use:bars={{
+				labels: [
+					'Jan',
+					'Feb',
+					'Mar',
+					'Apr',
+					'May',
+					'Jun',
+					'Jul',
+					'Aug',
+					'Sep',
+					'Oct',
+					'Nov',
+					'Dec'
+				],
+				data: [10000, 211111, 35555, 400000, 50000, 600000, 700000]
+			}}
+		></canvas>
+	</div>
+	<div class="size-110.5 rounded-2xl border-2 border-gray-300 p-5">
+		<canvas
+			use:pie={{
+				labels: [
+					'laptop',
+					'laptops',
+					'laptop',
+					'laptops',
+					'laptop',
+					'laptops',
+					'laptop',
+					'laptops',
+					'laptop',
+					'laptops'
+				],
+				data: [1, 1, 3, 4, 5, 6, 7, 8, 9]
+			}}
+		></canvas>
+	</div>
+</div>
 <div class="flex w-full items-start justify-start gap-2 py-4">
 	<div
-		class="flex h-fit w-1/2 flex-col shadow-sm items-start justify-start gap-2 rounded-xl border-2 border-gray-300 px-4 py-5"
+		class="flex h-fit w-1/2 flex-col items-start justify-start gap-2 rounded-xl border-2 border-gray-300 px-4 py-5 shadow-sm"
 	>
 		<h1 class="text-2xl leading-4 font-bold">recent sales</h1>
 		<p class="text-gray-400">Latest orders processed</p>
@@ -153,7 +198,8 @@
 					</div>
 				</div>
 				<p class="text-lg font-semibold">555dzd</p>
-			</li><li class="flex h-15 w-full items-center justify-between px-4 py-2">
+			</li>
+			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
 				<div class="flex h-full items-center justify-start gap-2">
 					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
 					<div class="flex flex-col items-start justify-center">
@@ -162,7 +208,8 @@
 					</div>
 				</div>
 				<p class="text-lg font-semibold">555dzd</p>
-			</li><li class="flex h-15 w-full items-center justify-between px-4 py-2">
+			</li>
+			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
 				<div class="flex h-full items-center justify-start gap-2">
 					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
 					<div class="flex flex-col items-start justify-center">
@@ -200,7 +247,8 @@
 					</div>
 				</div>
 				<p class="text-lg font-semibold">555dzd</p>
-			</li><li class="flex h-15 w-full items-center justify-between px-4 py-2">
+			</li>
+			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
 				<div class="flex h-full items-center justify-start gap-2">
 					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
 					<div class="flex flex-col items-start justify-center">
@@ -209,7 +257,8 @@
 					</div>
 				</div>
 				<p class="text-lg font-semibold">555dzd</p>
-			</li><li class="flex h-15 w-full items-center justify-between px-4 py-2">
+			</li>
+			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
 				<div class="flex h-full items-center justify-start gap-2">
 					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
 					<div class="flex flex-col items-start justify-center">

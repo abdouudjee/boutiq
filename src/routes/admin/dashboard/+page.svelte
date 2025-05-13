@@ -1,7 +1,26 @@
 <script>
 	import { bars, pie, clientsPie, ordersPie } from '$lib/actions/charts.svelte';
+	import { supabase } from '$lib/index.js';
 	let clients_pie = $state(false);
 	let orders_pie = $state(false);
+	let revenue = $state();
+	let orders_count = $state();
+	let products_count = $state();
+	let Customers_stats = $state();
+	$effect(async () => {
+		const { data, error } = await supabase.from('clients').select('status');
+
+		if (error) {
+			console.error(error);
+		} else {
+			const counts = data.reduce((acc, row) => {
+				acc[row.status] = (acc[row.status] || 0) + 1;
+				return acc;
+			}, {});
+			Customers_stats = [counts.new ?? 0, counts.active ?? 0, counts.inactive ?? 0];
+			console.log();
+		}
+	});
 </script>
 
 <div
@@ -314,7 +333,13 @@ xl:grid-cols-4 xl:grid-rows-1"
 				</button>
 			</div>
 			<div class="flex size-130 w-full items-center justify-center p-5">
-				<canvas use:clientsPie={[1, 1, 1]}></canvas>
+				<canvas
+					use:clientsPie={[
+						Customers_stats?.[0] ?? null,
+						Customers_stats?.[1] ?? null,
+						Customers_stats?.[2] ?? null
+					]}
+				></canvas>
 			</div>
 			<div class="flex h-10 w-full items-center justify-center">
 				<p class="text-xl font-bold">Client Status Distribution</p>
@@ -341,7 +366,7 @@ xl:grid-cols-4 xl:grid-rows-1"
 			<div class=" flex h-10 items-center justify-end px-3">
 				<button
 					onclick={() => {
-						clients_pie = false;
+						orders_pie = false;
 					}}
 					class="flex h-6 w-6 items-center justify-center rounded-full text-gray-400 hover:cursor-pointer hover:bg-gray-200 active:scale-95"
 				>

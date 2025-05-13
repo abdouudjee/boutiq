@@ -134,7 +134,6 @@ export function pie(node, data) {
 							if (percentage < 5) {
 								return label.substring(0, 3);
 							}
-							console.log(ctx.dataset.data);
 							return label;
 						},
 						font: {
@@ -192,6 +191,7 @@ export function clientsPie(node, data) {
 						clip: true,
 						offset: 40,
 						formatter: (value, ctx) => {
+							if (value == 0) return '';
 							const label = ctx.chart.data.labels[ctx.dataIndex];
 							const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
 							const percentage = (value / total) * 100;
@@ -199,7 +199,6 @@ export function clientsPie(node, data) {
 							if (percentage < 5) {
 								return label.substring(0, 3);
 							}
-							console.log(ctx.dataset.data);
 							return label;
 						},
 						font: {
@@ -257,6 +256,7 @@ export function ordersPie(node, data) {
 						clip: true,
 						offset: 40,
 						formatter: (value, ctx) => {
+							if (value == 0) return '';
 							const label = ctx.chart.data.labels[ctx.dataIndex];
 							const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
 							const percentage = (value / total) * 100;
@@ -264,7 +264,6 @@ export function ordersPie(node, data) {
 							if (percentage < 5) {
 								return label.substring(0, 3);
 							}
-							console.log(ctx.dataset.data);
 							return label;
 						},
 						font: {

@@ -17,7 +17,7 @@ export function bars(node, data) {
 			},
 			options: {
 				responsive: true,
-				maintainAspectRatio: true,
+				maintainAspectRatio: false,
 				plugins: {
 					legend: {
 						display: false

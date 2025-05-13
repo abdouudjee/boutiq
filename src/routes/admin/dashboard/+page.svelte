@@ -8,10 +8,16 @@
 	<h1 class="text-2xl font-bold tracking-wider text-black">Dashboard</h1>
 	<p class="text-gray-400">Overview of your store performance and recent activity.</p>
 </div>
-<div class="flex items-center justify-between gap-2 py-4">
-	<div
-		class="flex h-30 w-70 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm"
-	>
+<!-- stats overview -->
+<div
+	class="grid
+grid-cols-1
+gap-4 py-4
+sm:grid-cols-1 sm:grid-rows-4
+md:grid-cols-2 md:grid-rows-2
+xl:grid-cols-4 xl:grid-rows-1"
+>
+	<div class="flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm">
 		<div class="flex h-20 w-58 flex-col items-start justify-between">
 			<div class="flex h-fit w-full items-center justify-between gap-2">
 				<p class="font-medium">Total revenue</p>
@@ -40,9 +46,7 @@
 			</div>
 		</div>
 	</div>
-	<div
-		class="flex h-30 w-70 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm"
-	>
+	<div class="flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm">
 		<div class="flex h-20 w-58 flex-col items-start justify-between">
 			<div class="flex h-fit w-full items-center justify-between gap-2">
 				<p class="font-medium">orders</p>
@@ -68,9 +72,7 @@
 			</div>
 		</div>
 	</div>
-	<div
-		class="flex h-30 w-70 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm"
-	>
+	<div class="flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm">
 		<div class="flex h-20 w-58 flex-col items-start justify-between">
 			<div class="flex h-fit w-full items-center justify-between gap-2">
 				<p class="font-medium">products</p>
@@ -99,7 +101,7 @@
 		</div>
 	</div>
 	<div
-		class="flex h-30 w-70 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm"
+		class="w- flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm"
 	>
 		<div class="flex h-20 w-58 flex-col items-start justify-between">
 			<div class="flex h-fit w-full items-center justify-between gap-2">
@@ -129,9 +131,8 @@
 		</div>
 	</div>
 </div>
-<!-- overview with charts i'll make it later -->
-<div class="flex h-fit w-full flex-wrap items-start gap-3">
-	<div class="w-210 rounded-2xl border-2 border-gray-300 p-5">
+<div class="flex h-fit w-full flex-wrap items-start justify-between gap-3">
+	<div class="h-115 w-full rounded-2xl border-2 border-gray-300 p-5 xl:w-210">
 		<canvas
 			use:bars={{
 				labels: [
@@ -152,7 +153,7 @@
 			}}
 		></canvas>
 	</div>
-	<div class="size-110.5 rounded-2xl border-2 border-gray-300 p-5">
+	<div class="size-115 rounded-2xl border-2 border-gray-300 p-5">
 		<canvas
 			use:pie={{
 				labels: [

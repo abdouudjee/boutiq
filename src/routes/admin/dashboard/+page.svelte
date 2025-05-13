@@ -1,5 +1,7 @@
 <script>
-	import { bars, pie } from '$lib/actions/charts.svelte';
+	import { bars, pie, clientsPie, ordersPie } from '$lib/actions/charts.svelte';
+	let clients_pie = $state(false);
+	let orders_pie = $state(false);
 </script>
 
 <div
@@ -46,7 +48,15 @@ xl:grid-cols-4 xl:grid-rows-1"
 			</div>
 		</div>
 	</div>
-	<div class="flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm">
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<!-- orders stat -->
+	<div
+		class="flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm hover:cursor-pointer"
+		onclick={() => {
+			orders_pie = true;
+		}}
+	>
 		<div class="flex h-20 w-58 flex-col items-start justify-between">
 			<div class="flex h-fit w-full items-center justify-between gap-2">
 				<p class="font-medium">orders</p>
@@ -100,8 +110,14 @@ xl:grid-cols-4 xl:grid-rows-1"
 			</div>
 		</div>
 	</div>
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<!-- clients stats -->
 	<div
-		class="w- flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm"
+		class="w- flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm hover:cursor-pointer"
+		onclick={() => {
+			clients_pie = true;
+		}}
 	>
 		<div class="flex h-20 w-58 flex-col items-start justify-between">
 			<div class="flex h-fit w-full items-center justify-between gap-2">
@@ -272,3 +288,72 @@ xl:grid-cols-4 xl:grid-rows-1"
 		</ul>
 	</div>
 </div>
+{#if clients_pie}
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+		onclick={() => {
+			clients_pie = false;
+		}}
+	>
+		<div
+			class="flex size-150 flex-col justify-start rounded-2xl border-2 border-gray-300 bg-white"
+			onclick={(e) => {
+				e.stopPropagation();
+			}}
+		>
+			<div class=" flex h-10 items-center justify-end px-3">
+				<button
+					onclick={() => {
+						clients_pie = false;
+					}}
+					class="flex h-6 w-6 items-center justify-center rounded-full text-gray-400 hover:cursor-pointer hover:bg-gray-200 active:scale-95"
+				>
+					✕
+				</button>
+			</div>
+			<div class="flex size-130 w-full items-center justify-center p-5">
+				<canvas use:clientsPie={[1, 1, 1]}></canvas>
+			</div>
+			<div class="flex h-10 w-full items-center justify-center">
+				<p class="text-xl font-bold">Client Status Distribution</p>
+			</div>
+		</div>
+	</div>
+{/if}
+
+{#if orders_pie}
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+		onclick={() => {
+			orders_pie = false;
+		}}
+	>
+		<div
+			class="flex size-150 flex-col justify-start rounded-2xl border-2 border-gray-300 bg-white"
+			onclick={(e) => {
+				e.stopPropagation();
+			}}
+		>
+			<div class=" flex h-10 items-center justify-end px-3">
+				<button
+					onclick={() => {
+						clients_pie = false;
+					}}
+					class="flex h-6 w-6 items-center justify-center rounded-full text-gray-400 hover:cursor-pointer hover:bg-gray-200 active:scale-95"
+				>
+					✕
+				</button>
+			</div>
+			<div class="flex size-130 w-full items-center justify-center p-5">
+				<canvas use:ordersPie={[2, 3, 6, 4, 3, 6]}></canvas>
+			</div>
+			<div class="flex h-10 w-full items-center justify-center">
+				<p class="text-xl font-bold">Order Status Distribution</p>
+			</div>
+		</div>
+	</div>
+{/if}

@@ -60,7 +60,7 @@ export function bars(node, data) {
 						ticks: {
 							display: true, // ✅ Show Y axis labels (optional)
 							callback: function (value) {
-								return parseInt(value / 1000)+'k' + ' Dzd';
+								return parseInt(value / 1000) + 'k' + ' Dzd';
 							},
 							color: 'black',
 							font: {
@@ -139,6 +139,137 @@ export function pie(node, data) {
 						},
 						font: {
 							size: 18
+						},
+						color: 'black'
+					}
+				}
+			},
+			plugins: [ChartDataLabels]
+		});
+		return () => {
+			pie = null;
+		};
+	});
+}
+
+export function clientsPie(node, data) {
+	$effect(() => {
+		let pie = new Chart(node, {
+			type: 'pie',
+			data: {
+				labels: ['new', 'active', 'inactive'],
+				datasets: [
+					{
+						data: data,
+						backgroundColor: ['#470bf4', '#22ca1b', '#f41217']
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: true,
+				plugins: {
+					legend: {
+						display: false
+					},
+					tooltip: {
+						displayColors: false,
+						backgroundColor: 'white',
+						bodyColor: 'blue',
+						titleColor: 'black',
+						bodyFont: {
+							size: 24
+						},
+
+						titleFont: {
+							size: 20
+						}
+					},
+					datalabels: {
+						anchor: 'end',
+						display: true,
+						align: 'start',
+						clip: true,
+						offset: 40,
+						formatter: (value, ctx) => {
+							const label = ctx.chart.data.labels[ctx.dataIndex];
+							const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+							const percentage = (value / total) * 100;
+
+							if (percentage < 5) {
+								return label.substring(0, 3);
+							}
+							console.log(ctx.dataset.data);
+							return label;
+						},
+						font: {
+							size: 20,
+							weight: 700
+						},
+						color: 'black'
+					}
+				}
+			},
+			plugins: [ChartDataLabels]
+		});
+		return () => {
+			pie = null;
+		};
+	});
+}
+export function ordersPie(node, data) {
+	$effect(() => {
+		let pie = new Chart(node, {
+			type: 'pie',
+			data: {
+				labels: ['new', 'shipped', 'processing', 'dilivered', 'pending', 'cancelled'],
+				datasets: [
+					{
+						data: data,
+						backgroundColor: ['#470bf4', '#dff224', '#dc23c1', '#22ca1b', '#73798c', '#f41217']
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: true,
+				plugins: {
+					legend: {
+						display: false
+					},
+					tooltip: {
+						displayColors: false,
+						backgroundColor: 'white',
+						bodyColor: 'blue',
+						titleColor: 'black',
+						bodyFont: {
+							size: 24
+						},
+
+						titleFont: {
+							size: 20
+						}
+					},
+					datalabels: {
+						anchor: 'end',
+						display: true,
+						align: 'start',
+						clip: true,
+						offset: 40,
+						formatter: (value, ctx) => {
+							const label = ctx.chart.data.labels[ctx.dataIndex];
+							const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+							const percentage = (value / total) * 100;
+
+							if (percentage < 5) {
+								return label.substring(0, 3);
+							}
+							console.log(ctx.dataset.data);
+							return label;
+						},
+						font: {
+							size: 20,
+							weight: 700
 						},
 						color: 'black'
 					}

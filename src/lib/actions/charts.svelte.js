@@ -218,13 +218,20 @@ export function clientsPie(node, data) {
 }
 export function ordersPie(node, data) {
 	$effect(() => {
+		const labels = data.map((elem) => {
+			return elem.label;
+		});
+		const values = data.map((elem) => {
+			return elem.count;
+		});
 		let pie = new Chart(node, {
 			type: 'pie',
 			data: {
-				labels: ['new', 'shipped', 'processing', 'dilivered', 'pending', 'cancelled'],
+				labels: labels,
+				// ['new', 'shipped', 'processing', 'dilivered', 'pending', 'cancelled'],
 				datasets: [
 					{
-						data: data,
+						data: values,
 						backgroundColor: ['#470bf4', '#dff224', '#dc23c1', '#22ca1b', '#73798c', '#f41217']
 					}
 				]

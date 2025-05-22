@@ -4,9 +4,12 @@
 	let clients_pie = $state(false);
 	let orders_pie = $state(false);
 	let revenue = $state();
-	let orders_count = $state();
-	let products_count = $state();
+	let orders_count = $state(null);
+	let products_count = $state(null);
 	let Customers_stats = $state();
+	let orders_stats = $state();
+	let active_customers_count = $state(null);
+	// customers status counting
 	$effect(async () => {
 		const { data, error } = await supabase.from('clients').select('status');
 
@@ -18,8 +21,30 @@
 				return acc;
 			}, {});
 			Customers_stats = [counts.new ?? 0, counts.active ?? 0, counts.inactive ?? 0];
-			console.log();
+			active_customers_count = counts.active+counts.new;
 		}
+	});
+	// products counting
+	$effect(async () => {
+		const { count, error } = await supabase
+			.from('products')
+			.select('*', { count: 'exact', head: true });
+		products_count = count;
+	});
+	// orders counting
+	$effect(async () => {
+		const { data, count, error } = await supabase
+			.from('orders')
+			.select('status_history', { count: 'exact', head: false });
+		orders_count = count;
+		const counts = data.reduce((acc, row) => {
+			acc[row.status_history[row.status_history.length - 1]] =
+				(acc[row.status_history[row.status_history.length - 1]] || 0) + 1;
+			return acc;
+		}, {});
+		orders_stats = Object.keys(counts).map((elem) => {
+			return { label: elem, count: counts[elem] };
+		});
 	});
 </script>
 
@@ -38,6 +63,7 @@ sm:grid-cols-1 sm:grid-rows-4
 md:grid-cols-2 md:grid-rows-2
 xl:grid-cols-4 xl:grid-rows-1"
 >
+	<!-- total revinue -->
 	<div class="flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm">
 		<div class="flex h-20 w-58 flex-col items-start justify-between">
 			<div class="flex h-fit w-full items-center justify-between gap-2">
@@ -69,7 +95,7 @@ xl:grid-cols-4 xl:grid-rows-1"
 	</div>
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<!-- orders stat -->
+	<!-- orders stats -->
 	<div
 		class="flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm hover:cursor-pointer"
 		onclick={() => {
@@ -96,11 +122,12 @@ xl:grid-cols-4 xl:grid-rows-1"
 				>
 			</div>
 			<div class="flex flex-col items-start justify-between">
-				<span class="text-2xl font-bold">+30</span>
+				<span class="text-2xl font-bold">{orders_count ?? 'counting...'}</span>
 				<p class="text-xs text-gray-400"><span></span> from last month</p>
 			</div>
 		</div>
 	</div>
+	<!-- products stats -->
 	<div class="flex h-30 items-center justify-center rounded-lg border-2 border-gray-300 shadow-sm">
 		<div class="flex h-20 w-58 flex-col items-start justify-between">
 			<div class="flex h-fit w-full items-center justify-between gap-2">
@@ -123,7 +150,7 @@ xl:grid-cols-4 xl:grid-rows-1"
 			</div>
 			<div class="flex flex-col items-start justify-between">
 				<p class="text- text-black">
-					<span class="text-2xl font-bold">122</span>
+					<span class="text-2xl font-bold">{products_count ?? 'counting...'}</span>
 				</p>
 				<p class="text-xs text-gray-400">+<span>32</span> new this month</p>
 			</div>
@@ -159,7 +186,7 @@ xl:grid-cols-4 xl:grid-rows-1"
 			</div>
 			<div class="flex flex-col items-start justify-between">
 				<p class="text- text-black">
-					<span class="text-2xl font-bold">547</span>
+					<span class="text-2xl font-bold">{active_customers_count ?? 'counting...'}</span>
 				</p>
 				<p class="text-xs text-gray-400"><span></span> from last month</p>
 			</div>
@@ -374,7 +401,7 @@ xl:grid-cols-4 xl:grid-rows-1"
 				</button>
 			</div>
 			<div class="flex size-130 w-full items-center justify-center p-5">
-				<canvas use:ordersPie={[2, 3, 6, 4, 3, 6]}></canvas>
+				<canvas use:ordersPie={[...orders_stats]}></canvas>
 			</div>
 			<div class="flex h-10 w-full items-center justify-center">
 				<p class="text-xl font-bold">Order Status Distribution</p>

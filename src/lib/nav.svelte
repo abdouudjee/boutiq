@@ -8,7 +8,6 @@
 	onMount(async () => {
 		let { data: store_info, error } = await supabase.from('store_info').select('*');
 		store_info = store_info;
-		console.table(store_info[0]);
 		url = store_info[0].logo_url;
 		phone = store_info[0].phone;
 		address = store_info[0].address;

@@ -6,7 +6,12 @@
 	// selected settings
 	let selected = $state('store');
 	// store form vars
+	let store_infos = $state({});
 	let store_desc = $state('');
+	let store_name = $state('');
+	let store_email = $state();
+	let store_phone = $state();
+	let store_address = $state();
 	let logo = $state('');
 	let favicon = $state('');
 	$effect(() => {
@@ -18,11 +23,8 @@
 	let wilayas = $state([]);
 	onMount(async () => {
 		const { data } = await supabase.from('wilayas').select('*').range(0, 50);
-		console.log(data);
 		wilayas = data;
-
 		let { data: products, error: err } = await supabase.from('products').select('*');
-		console.log('prod', products, 'err:', err);
 	});
 	// add admin form vars
 	let adminform = $state(false);
@@ -40,6 +42,17 @@
 		shipping_company_form || adminform
 			? (document.body.style.overflow = 'hidden')
 			: (document.body.style.overflow = 'auto');
+	});
+	// fetching store info
+	onMount(async () => {
+		let { data: store_info, error } = await supabase.from('store_info').select('*');
+		store_info = store_info[0];
+		store_desc = store_info.store_description;
+		store_name = store_info.store_name;
+		store_email = store_info.email;
+		store_phone = store_info.phone;
+		store_address = store_info.address;
+		store_infos = store_info;
 	});
 </script>
 
@@ -86,6 +99,7 @@
 				<div class="flex w-full flex-col items-start justify-start">
 					<label for="store-name" class="font-medium">store name</label>
 					<input
+						bind:value={store_name}
 						type="text"
 						id="store-name"
 						class="mt-2 h-10 w-1/2 rounded-lg border-2 border-gray-300 px-4"
@@ -99,6 +113,7 @@
 						bind:value={store_desc}
 						name="store-description"
 						id=""
+						placeholder="fill in your store decription"
 						class="mt-2 h-30 w-full rounded-lg border-2 border-gray-300 text-left ring-0"
 						style=" 
                     scroll-behavior: smooth;
@@ -110,8 +125,9 @@
 					<div class="flex w-1/2 flex-col items-start justify-start">
 						<label class="font-medium" for="store-name">contact email</label>
 						<input
-							type="text"
-							id="store-name"
+							bind:value={store_email}
+							type="email"
+							id="email"
 							class="mt-2 h-10 w-full rounded-lg border-2 border-gray-300 px-4"
 							placeholder="store name"
 						/>
@@ -119,8 +135,9 @@
 					<div class="flex w-1/2 flex-col items-start justify-start">
 						<label for="store-name" class="font-medium">contact phone</label>
 						<input
-							type="text"
-							id="store-name"
+							bind:value={store_phone}
+							type="number"
+							id="phone"
 							class="mt-2 h-10 w-full rounded-lg border-2 border-gray-300 px-4"
 							placeholder="store name"
 						/>
@@ -131,7 +148,8 @@
 					<label for="store-description" class="font-medium">Store Address </label>
 
 					<textarea
-						name="store-description"
+						bind:value={store_address}
+						name="store-address"
 						id=""
 						class="mt-2 h-15 w-full rounded-lg border-2 border-gray-300 px-4"
 						style="
@@ -141,16 +159,41 @@
 					</textarea>
 				</div>
 			</div>
-			<div class="flex w-full items-center justify-end gap-4 px-4 py-2">
-				<button
-					class="flex cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
-					>reset</button
-				>
-				<button
-					class="flex cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
-					>save changes</button
-				>
-			</div>
+			{#if !(store_desc == store_infos.store_description && store_name == store_infos.store_name && store_email == store_infos.email && store_phone == store_infos.phone && store_address == store_infos.address)}
+				<div class="flex w-full items-center justify-end gap-4 px-4 py-2">
+					<button
+						class="flex cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
+						>reset</button
+					>
+					<button
+						onclick={async () => {
+							let modified = {};
+							if (store_desc !== store_infos.store_description) {
+								modified.store_description = store_desc;
+							}
+							if (store_name !== store_infos.store_name) {
+								modified.store_name = store_name;
+							}
+							if (store_email !== store_infos.email) {
+								modified.email = store_email;
+							}
+							if (store_phone !== store_infos.phone) {
+								modified.phone = store_phone;
+							}
+							if (store_address !== store_infos.address) {
+								modified.store_address = store_address;
+							}
+							const { data, error } = await supabase
+								.from('store_info')
+								.update( modified )
+								.eq('id', '1')
+								.select();
+						}}
+						class="flex cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
+						>save changes</button
+					>
+				</div>
+			{/if}
 		</div>
 		<div class="h-fit w-full rounded-lg border-2 border-gray-300 px-4 py-2">
 			<p class="text-3xl leading-10 font-medium tracking-wide text-black">Store Appearance</p>

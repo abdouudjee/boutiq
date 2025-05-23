@@ -52,8 +52,13 @@
 		store_email = store_info.email;
 		store_phone = store_info.phone;
 		store_address = store_info.address;
+		logo = store_info.logo_url;
+		favicon = store_info.favicon_url;
 		store_infos = store_info;
+		console.table(store_info);
 	});
+	let faviconfile = $state();
+	let logofile = $state();
 </script>
 
 <div
@@ -185,7 +190,7 @@
 							}
 							const { data, error } = await supabase
 								.from('store_info')
-								.update( modified )
+								.update(modified)
 								.eq('id', '1')
 								.select();
 						}}
@@ -218,6 +223,7 @@
 								alt="upload image"
 								onchange={(e) => {
 									const file = e.target.files?.[0];
+									logofile = file;
 									logo = file ? URL.createObjectURL(file) : null;
 									if (file) {
 										const filename = file.name;
@@ -248,6 +254,7 @@
 								alt="upload image"
 								onchange={(e) => {
 									const file = e.target.files?.[0];
+									faviconfile = file;
 									favicon = file ? URL.createObjectURL(file) : null;
 									if (file) {
 										const filename = file.name;
@@ -264,17 +271,36 @@
 					do to later
 				</div>
 			</div>
-
-			<div class="flex w-full items-center justify-end gap-4 px-4 py-2">
-				<button
-					class="flex cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
-					>reset</button
-				>
-				<button
-					class="flex cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
-					>save changes</button
-				>
-			</div>
+			{#if !(logo == store_infos.logo_url && favicon == store_infos.favicon_url)}
+				<div class="flex w-full items-center justify-end gap-4 px-4 py-2">
+					<button
+						class="flex cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-base font-medium hover:bg-gray-200 active:scale-95"
+						>reset</button
+					>
+					<button
+						class="flex cursor-pointer items-center justify-center rounded-lg border-2 bg-black px-4 py-2 text-base font-medium text-white hover:bg-gray-800 active:scale-95"
+						onclick={async () => {
+							let modified = {};
+							if (logo !== store_infos.logo_url) {
+								const { data, error } = await supabase.storage
+									.from('store.info')
+									.upload('logo.png', logofile, {
+										upsert: true
+									});
+								logo = store_infos.logo_url;
+							}
+							if (favicon !== store_infos.favicon_url) {
+								const { data, error } = await supabase.storage
+									.from('store.info')
+									.upload('favicon.png', faviconfile, {
+										upsert: true
+									});
+								favicon = store_infos.favicon_url;
+							}
+						}}>save changes</button
+					>
+				</div>
+			{/if}
 		</div>
 	{:else if selected == 'shipping'}
 		<div

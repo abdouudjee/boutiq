@@ -55,10 +55,34 @@
 		logo = store_info.logo_url;
 		favicon = store_info.favicon_url;
 		store_infos = store_info;
-		console.table(store_info);
 	});
 	let faviconfile = $state();
 	let logofile = $state();
+	// fetching shipping companies
+	let shipping_companies = $state();
+	$effect(async () => {
+		let { data: shipping_comps, error } = await supabase.from('shipping_companies').select('*');
+		shipping_companies = shipping_comps;
+	});
+	// fetching shipping prices
+	let prices = $state();
+	$effect(async () => {
+		const { data, error } = await supabase.from('shipping_prices').select(`
+    id,
+    price,
+    shipping_companies (
+      id,
+      name
+    ),
+    wilayas (
+      id,
+      name
+    )
+  `);
+		data.sort((a, b) => a.wilayas.id - b.wilayas.id);
+		prices = data;
+		console.table(data);
+	});
 </script>
 
 <div
@@ -343,30 +367,14 @@
 						</tr>
 					</thead>
 					<tbody class="">
-						{@render shippingcompanyrow({
-							name: 'zr express',
-							default_rate: 2000,
-							estimated_delivery: 2,
-							status: 'active'
-						})}
-						{@render shippingcompanyrow({
-							name: 'dhd express',
-							default_rate: 5000,
-							estimated_delivery: 3,
-							status: 'inactive'
-						})}
-						{@render shippingcompanyrow({
-							name: 'yalidin express',
-							default_rate: 10000,
-							estimated_delivery: 5,
-							status: 'active'
-						})}
-						{@render shippingcompanyrow({
-							name: 'lihlih express',
-							default_rate: 15000,
-							estimated_delivery: 7,
-							status: 'inactive'
-						})}
+						{#each shipping_companies as ship_comp}
+							{@render shippingcompanyrow({
+								name: ship_comp.name,
+								default_rate: ship_comp.shipping_rate[0].price,
+								estimated_delivery: ship_comp.estimated_time,
+								status: ship_comp.status
+							})}
+						{/each}
 					</tbody>
 				</table>
 			</div>
@@ -386,10 +394,9 @@
 						<tr class="rounded-t-2xl border-b-1 border-b-gray-300">
 							<th class="w-10 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">code</th>
 							<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">states </th>
-							<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">zr express </th>
-							<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">zr express </th>
-							<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">zr express </th>
-							<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">zr express </th>
+							{#each shipping_companies as shipping_company}
+								<th class="w-35 border-b-2 border-b-gray-300 px-4 py-2">{shipping_company.name}</th>
+							{/each}
 						</tr>
 					</thead>
 					<tbody>
@@ -401,10 +408,7 @@
 								<td class="w-40 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"
 									>{wilaya.name}</td
 								>
-								<Cell value="500" />
-								<td class="w-35 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"></td>
-								<td class="w-35 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">600 dzd</td>
-								<td class="w-35 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2">400 dzd</td>
+								<Cell value={prices.find(p=>p.wilayas.id===id)?.price??'N/A'} />
 							</tr>
 						{/each}
 					</tbody>
@@ -454,7 +458,8 @@
 						name: 'hello',
 						role: 'administrator',
 						img: null,
-						status: 'active'
+						status: 'active',
+						image: ship_com.logo
 					})}
 					{@render adminrow({
 						email: 'example@gmail.com',

@@ -67,6 +67,6 @@
 			>
 		</div>
 	{:else}
-		{value} <span class="text-sm font-medium">DZD</span>
+		{value=='N/A'?'-':value+' DZD'} 
 	{/if}
 </td>

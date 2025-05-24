@@ -15,6 +15,7 @@
 	let revenues = $state([]);
 	let cats = $state([]);
 	let counts = $state([]);
+	let mostRecentFive = $state([]);
 	// customers status counting
 	$effect(async () => {
 		const { data, error } = await supabase.from('clients').select('status');
@@ -101,6 +102,32 @@
 		});
 
 		revenues = revenueArray;
+
+		//getting most recent orders
+		// Sort orders by date descending (newest first)
+		const sortedOrders = orders
+			.slice()
+			.sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
+
+		// Get the top 5 most recent
+		mostRecentFive = sortedOrders.slice(0, 5);
+		await Promise.all(
+			mostRecentFive.map(async (order) => {
+				const { data: clients, error } = await supabase
+					.from('clients')
+					.select('full_name,email')
+					.eq('id', order.client_id);
+
+				if (!error && clients.length > 0) {
+					order.email = clients[0].email;
+					order.person = clients[0].full_name;
+					console.log(order);
+				} else {
+					order.email = null;
+					order.person = null;
+				}
+			})
+		);
 	});
 </script>
 
@@ -273,46 +300,20 @@ xl:grid-cols-4 xl:grid-rows-1"
 		<h1 class="text-2xl leading-4 font-bold">recent sales</h1>
 		<p class="text-gray-400">Latest orders processed</p>
 		<ul class="w-full">
-			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
-				<div class="flex h-full items-center justify-start gap-2">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
-					<div class="flex flex-col items-start justify-center">
-						<p class="leading-4 text-black">user name here</p>
-						<p class="leading-4 text-gray-400">email here</p>
+			{#each mostRecentFive as order}
+				<li class="flex h-15 w-full items-center justify-between px-4 py-2">
+					<div class="flex h-full items-center justify-start gap-2">
+						<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">
+							UN
+						</div>
+						<div class="flex flex-col  gap-1 items-start justify-center">
+							<p class="leading-4 text-black text-base font-medium">{order.person}</p>
+							<p class="leading-4 text-gray-400">{order.email}</p>
+						</div>
 					</div>
-				</div>
-				<p class="text-lg font-semibold">555dzd</p>
-			</li>
-			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
-				<div class="flex h-full items-center justify-start gap-2">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
-					<div class="flex flex-col items-start justify-center">
-						<p class="leading-4 text-black">user name here</p>
-						<p class="leading-4 text-gray-400">email here</p>
-					</div>
-				</div>
-				<p class="text-lg font-semibold">555dzd</p>
-			</li>
-			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
-				<div class="flex h-full items-center justify-start gap-2">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
-					<div class="flex flex-col items-start justify-center">
-						<p class="leading-4 text-black">user name here</p>
-						<p class="leading-4 text-gray-400">email here</p>
-					</div>
-				</div>
-				<p class="text-lg font-semibold">555dzd</p>
-			</li>
-			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
-				<div class="flex h-full items-center justify-start gap-2">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
-					<div class="flex flex-col items-start justify-center">
-						<p class="leading-4 text-black">user name here</p>
-						<p class="leading-4 text-gray-400">email here</p>
-					</div>
-				</div>
-				<p class="text-lg font-semibold">555dzd</p>
-			</li>
+					<p class="text-lg font-semibold">{order.total_price} dzd</p>
+				</li>
+			{/each}
 		</ul>
 	</div>
 

@@ -372,7 +372,8 @@
 								name: ship_comp.name,
 								default_rate: ship_comp.shipping_rate[0].price,
 								estimated_delivery: ship_comp.estimated_time,
-								status: ship_comp.status
+								status: ship_comp.status,
+								image: ship_comp.image
 							})}
 						{/each}
 					</tbody>
@@ -408,7 +409,7 @@
 								<td class="w-40 rounded-t-2xl border-b-2 border-b-gray-300 px-4 py-2"
 									>{wilaya.name}</td
 								>
-								<Cell value={prices.find(p=>p.wilayas.id===id)?.price??'N/A'} />
+								<Cell value={prices.find((p) => p.wilayas.id === id)?.price ?? 'N/A'} />
 							</tr>
 						{/each}
 					</tbody>
@@ -459,7 +460,7 @@
 						role: 'administrator',
 						img: null,
 						status: 'active',
-						image: ship_com.logo
+						image: ''
 					})}
 					{@render adminrow({
 						email: 'example@gmail.com',

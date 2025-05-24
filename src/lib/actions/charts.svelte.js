@@ -6,10 +6,23 @@ export function bars(node, data) {
 		let bar = new Chart(node, {
 			type: 'bar',
 			data: {
-				labels: data.labels,
+				labels: [
+					'Jan',
+					'Feb',
+					'Mar',
+					'Apr',
+					'May',
+					'Jun',
+					'Jul',
+					'Aug',
+					'Sep',
+					'Oct',
+					'Nov',
+					'Dec'
+				],
 				datasets: [
 					{
-						data: data.data,
+						data: data,
 						backgroundColor: ['blue'],
 						borderRadius: [5]
 					}
@@ -130,7 +143,7 @@ export function pie(node, data) {
 							const label = ctx.chart.data.labels[ctx.dataIndex];
 							const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
 							const percentage = (value / total) * 100;
-
+							if (value == 0) return '';
 							if (percentage < 5) {
 								return label.substring(0, 3);
 							}

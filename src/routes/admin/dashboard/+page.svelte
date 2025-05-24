@@ -9,6 +9,12 @@
 	let Customers_stats = $state();
 	let orders_stats = $state();
 	let active_customers_count = $state(null);
+	let orders = $state();
+	let thisMonthOrders = $state();
+	let thisMonthRevenue = $state();
+	let revenues = $state([]);
+	let cats = $state([]);
+	let counts = $state([]);
 	// customers status counting
 	$effect(async () => {
 		const { data, error } = await supabase.from('clients').select('status');
@@ -21,14 +27,35 @@
 				return acc;
 			}, {});
 			Customers_stats = [counts.new ?? 0, counts.active ?? 0, counts.inactive ?? 0];
-			active_customers_count = counts.active+counts.new;
+			active_customers_count = counts.active + counts.new;
 		}
 	});
 	// products counting
 	$effect(async () => {
-		const { count, error } = await supabase
-			.from('products')
-			.select('*', { count: 'exact', head: true });
+		const {
+			data: products,
+			count,
+			error
+		} = await supabase.from('products').select('*', { count: 'exact', head: false });
+
+		const categoryCounts = {};
+
+		products.forEach((product) => {
+			const catId = product.category_id;
+			categoryCounts[catId] = (categoryCounts[catId] || 0) + 1;
+		});
+		const { data: categories, error: err } = await supabase.from('categories').select('id,name');
+		// Step 1: Sort categories by id ascending
+		const sortedCategories = categories.slice().sort((a, b) => a.id - b.id);
+
+		// Step 2: Extract only names in that order
+		const sortedCategoryNames = sortedCategories.map((cat) => cat.name);
+
+		// Step 3: Extract counts for those sorted ids
+		const sortedCounts = sortedCategories.map((cat) => categoryCounts[cat.id] || 0);
+
+		cats = sortedCategoryNames;
+		counts = sortedCounts;
 		products_count = count;
 	});
 	// orders counting
@@ -45,6 +72,35 @@
 		orders_stats = Object.keys(counts).map((elem) => {
 			return { label: elem, count: counts[elem] };
 		});
+		const { data: ors, error: x } = await supabase.from('orders').select('*');
+		orders = ors;
+		// getting this month orders
+		const now = new Date();
+		const currentMonth = now.getMonth(); // 0-based
+		const currentYear = now.getFullYear();
+
+		const thisMonthOrders = orders.filter((order) => {
+			const orderDate = new Date(order.order_date);
+			return orderDate.getMonth() === currentMonth && orderDate.getFullYear() === currentYear;
+		});
+
+		thisMonthRevenue = thisMonthOrders.reduce((sum, order) => sum + order.total_price, 0);
+		// Target year
+		const year = 2025;
+
+		// Initialize 12 months of revenue with 0
+		const revenueArray = Array(12).fill(0);
+
+		// Sum revenue for each month
+		orders.forEach((order) => {
+			const date = new Date(order.order_date);
+			if (date.getFullYear() === year) {
+				const monthIndex = date.getMonth(); // 0 = Jan, 11 = Dec
+				revenueArray[monthIndex] += order.total_price;
+			}
+		});
+
+		revenues = revenueArray;
 	});
 </script>
 
@@ -86,10 +142,10 @@ xl:grid-cols-4 xl:grid-rows-1"
 			</div>
 			<div class="flex flex-col items-start justify-between">
 				<p class="text- text-black">
-					<span class="text-2xl font-bold">555.55</span>
+					<span class="text-2xl font-bold">{thisMonthRevenue}</span>
 					DZD
 				</p>
-				<p class="text-xs text-gray-400"><span></span> from last month</p>
+				<p class="text-xs text-gray-400"><span></span> from this month</p>
 			</div>
 		</div>
 	</div>
@@ -195,44 +251,19 @@ xl:grid-cols-4 xl:grid-rows-1"
 </div>
 <div class="flex h-fit w-full flex-wrap items-start justify-between gap-3">
 	<div class="h-115 w-full rounded-2xl border-2 border-gray-300 p-5 xl:w-210">
-		<canvas
-			use:bars={{
-				labels: [
-					'Jan',
-					'Feb',
-					'Mar',
-					'Apr',
-					'May',
-					'Jun',
-					'Jul',
-					'Aug',
-					'Sep',
-					'Oct',
-					'Nov',
-					'Dec'
-				],
-				data: [10000, 211111, 35555, 400000, 50000, 600000, 700000]
-			}}
-		></canvas>
+		{#if revenues.length}
+			<canvas use:bars={[...revenues]}></canvas>
+		{/if}
 	</div>
 	<div class="size-115 rounded-2xl border-2 border-gray-300 p-5">
-		<canvas
-			use:pie={{
-				labels: [
-					'laptop',
-					'laptops',
-					'laptop',
-					'laptops',
-					'laptop',
-					'laptops',
-					'laptop',
-					'laptops',
-					'laptop',
-					'laptops'
-				],
-				data: [1, 1, 3, 4, 5, 6, 7, 8, 9]
-			}}
-		></canvas>
+		{#if cats.length}
+			<canvas
+				use:pie={{
+					labels: [...cats],
+					data: [...counts]
+				}}
+			></canvas>
+		{/if}
 	</div>
 </div>
 <div class="flex w-full items-start justify-start gap-2 py-4">

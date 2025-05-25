@@ -15,7 +15,7 @@
 				class={[
 					' mx-auto  w-fit rounded-full  px-2  py-1 text-sm font-medium ',
 					order.status == 'shipped' ? ' bg-green-200 font-medium  text-green-700' : '',
-					order.status == 'dilivered' ? 'bg-black font-medium  text-white' : '',
+					order.status == 'delivered' ? 'bg-black font-medium  text-white' : '',
 					order.status == 'cancelled' ? 'bg-red-100 font-medium  text-red-800' : '',
 					order.status == 'pending' ? 'bg-yellow-200 font-medium  text-yellow-800' : '',
 					order.status == 'new' ? 'bg-blue-200 font-medium  text-blue-700' : '',

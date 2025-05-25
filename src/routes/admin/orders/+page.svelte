@@ -1,5 +1,25 @@
 <script>
 	import { order_row } from '$lib/tablerow.svelte';
+	import { supabase } from '$lib/index.js';
+	let orders = $state();
+	$effect(async () => {
+		let { data: ordrs, error } = await supabase.from('orders').select('*');
+		orders = ordrs;
+		await Promise.all(
+			orders.map(async (order) => {
+				const { data: clients, error } = await supabase
+					.from('clients')
+					.select('full_name')
+					.eq('id', order.client_id);
+
+				if (!error && clients.length > 0) {
+					order.person = clients[0].full_name;
+				} else {
+					order.person = null;
+				}
+			})
+		);
+	});
 </script>
 
 <div
@@ -15,7 +35,7 @@
 >
 	<thead class="border-separate rounded-t-2xl">
 		<tr class="rounded-t-2xl border-b-1 border-b-gray-300">
-			<th class=" w-35  rounded-tl-2xl border-b-2 border-b-gray-300 px-4 py-2">Order</th>
+			<th class=" w-35 rounded-tl-2xl border-b-2 border-b-gray-300 px-4 py-2">Order</th>
 			<th class=" border-b-2 border-b-gray-300 px-4 py-2">Customer </th>
 			<th class=" w-50 border-b-2 border-b-gray-300 px-4 py-2">date</th>
 			<th class=" w-50 border-b-2 border-b-gray-300 px-4 py-2">total</th>
@@ -24,14 +44,14 @@
 		</tr>
 	</thead>
 	<tbody class="">
-		{@render order_row({ id:1, customer:'tralalilo tralala',date: '2022-12-02', total_amount:500,status:'shipped'})}
-		{@render order_row({ id:2, customer:'tralalilo tralala',date: '2022-12-02', total_amount:500,status:'dilivered'})}
-		{@render order_row({ id:3, customer:'tralalilo tralala',date: '2022-12-02', total_amount:500,status:'cancelled'})}
-		{@render order_row({ id:4, customer:'tralalilo tralala',date: '2022-12-02', total_amount:500,status:'pending'})}
-		{@render order_row({ id:5, customer:'tralalilo tralala',date: '2022-12-02', total_amount:500,status:'new'})}
-		{@render order_row({ id:6, customer:'tralalilo tralala',date: '2022-12-02', total_amount:500,status:'processing'})}
-		{@render order_row({ id:7, customer:'tralalilo tralala',date: '2022-12-02', total_amount:500,status:'shipped'})}
-		{@render order_row({ id:8, customer:'tralalilo tralala',date: '2022-12-02', total_amount:500,status:'dilivered'})}
-		{@render order_row({ id:9, customer:'tralalilo tralala',date: '2022-12-02', total_amount:500,status:'cancelled'})}
+		{#each orders as order}
+			{@render order_row({
+				id: order.id,
+				customer: order.person,
+				date: order.order_date.slice(0, 10),
+				total_amount: order.total_price,
+				status: order.status_history[order.status_history.length - 1]
+			})}
+		{/each}
 	</tbody>
 </table>

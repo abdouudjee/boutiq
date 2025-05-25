@@ -121,13 +121,19 @@
 				if (!error && clients.length > 0) {
 					order.email = clients[0].email;
 					order.person = clients[0].full_name;
-					console.log(order);
 				} else {
 					order.email = null;
 					order.person = null;
 				}
 			})
 		);
+	});
+	// best selling
+	let bestselling = $state();
+	$effect(async () => {
+		const { data, error } = await supabase.from('top_selling_products').select('*');
+		console.table(data);
+		bestselling = data;
 	});
 </script>
 
@@ -293,9 +299,9 @@ xl:grid-cols-4 xl:grid-rows-1"
 		{/if}
 	</div>
 </div>
-<div class="flex w-full items-start justify-start gap-2 py-4">
+<div class="flex w-full flex-wrap items-start justify-start gap-2 py-4 xl:flex-nowrap">
 	<div
-		class="flex h-fit w-1/2 flex-col items-start justify-start gap-2 rounded-xl border-2 border-gray-300 px-4 py-5 shadow-sm"
+		class="flex h-fit w-full flex-col items-start justify-start gap-2 rounded-xl border-2 border-gray-300 px-4 py-5 shadow-sm xl:w-1/2"
 	>
 		<h1 class="text-2xl leading-4 font-bold">recent sales</h1>
 		<p class="text-gray-400">Latest orders processed</p>
@@ -306,8 +312,8 @@ xl:grid-cols-4 xl:grid-rows-1"
 						<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">
 							UN
 						</div>
-						<div class="flex flex-col  gap-1 items-start justify-center">
-							<p class="leading-4 text-black text-base font-medium">{order.person}</p>
+						<div class="flex flex-col items-start justify-center gap-1">
+							<p class="text-base leading-4 font-medium text-black">{order.person}</p>
 							<p class="leading-4 text-gray-400">{order.email}</p>
 						</div>
 					</div>
@@ -318,51 +324,24 @@ xl:grid-cols-4 xl:grid-rows-1"
 	</div>
 
 	<div
-		class="flex h-fit w-1/2 flex-col items-start justify-start gap-2 rounded-xl border-2 border-gray-300 px-4 py-5 shadow-sm"
+		class="flex h-fit w-full flex-col items-start justify-start gap-2 rounded-xl border-2 border-gray-300 px-4 py-5 shadow-sm xl:w-1/2"
 	>
 		<h1 class="text-2xl leading-4 font-bold">Top Products</h1>
-		<p class="text-gray-400">Best selling products this month.</p>
+		<p class="text-gray-400">Best selling products in your store.</p>
 		<ul class="w-full">
-			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
-				<div class="flex h-full items-center justify-start gap-2">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
-					<div class="flex flex-col items-start justify-center">
-						<p class="leading-4 text-black">product name here</p>
-						<p class="leading-4 text-gray-400">category here</p>
+			{#each bestselling as product}
+				<li class="flex h-15 w-full items-center justify-between px-4 py-2">
+					<div class="flex h-full items-center justify-start gap-2">
+						<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">
+							<img src="" alt="" />
+						</div>
+						<div class="flex flex-col items-start justify-center">
+							<p class="leading-4 font-medium text-black">{product.product_name}</p>
+						</div>
 					</div>
-				</div>
-				<p class="text-lg font-semibold">555dzd</p>
-			</li>
-			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
-				<div class="flex h-full items-center justify-start gap-2">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
-					<div class="flex flex-col items-start justify-center">
-						<p class="leading-4 text-black">product name here</p>
-						<p class="leading-4 text-gray-400">category here</p>
-					</div>
-				</div>
-				<p class="text-lg font-semibold">555dzd</p>
-			</li>
-			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
-				<div class="flex h-full items-center justify-start gap-2">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
-					<div class="flex flex-col items-start justify-center">
-						<p class="leading-4 text-black">product name here</p>
-						<p class="leading-4 text-gray-400">category here</p>
-					</div>
-				</div>
-				<p class="text-lg font-semibold">555dzd</p>
-			</li>
-			<li class="flex h-15 w-full items-center justify-between px-4 py-2">
-				<div class="flex h-full items-center justify-start gap-2">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400">UN</div>
-					<div class="flex flex-col items-start justify-center">
-						<p class="leading-4 text-black">product name here</p>
-						<p class="leading-4 text-gray-400">category here</p>
-					</div>
-				</div>
-				<p class="text-lg font-semibold">555dzd</p>
-			</li>
+					<p class="text-lg font-semibold">{product.total_quantity_sold}</p>
+				</li>
+			{/each}
 		</ul>
 	</div>
 </div>

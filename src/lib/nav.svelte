@@ -118,11 +118,11 @@
 				<!-- svelte-ignore a11y_autofocus -->
 				<a href="/" class="flex h-4 items-center px-2.5 text-lg text-black outline-none">Home</a>
 				<!-- svelte-ignore a11y_consider_explicit_label -->
-				<a href="/" class="text-iron-gray flex h-4 items-center px-2.5 text-lg outline-none"
+				<a href="/product" class="text-iron-gray flex h-4 items-center px-2.5 text-lg outline-none"
 					>Product</a
 				>
 				<!-- svelte-ignore a11y_consider_explicit_label -->
-				<a href="/" class="text-iron-gray flex h-4 items-center px-2.5 text-lg outline-none"
+				<a href="/product?tag=newArrival" class="text-iron-gray flex h-4 items-center px-2.5 text-lg outline-none"
 					>New Arrival</a
 				>
 				<!-- svelte-ignore a11y_consider_explicit_label -->

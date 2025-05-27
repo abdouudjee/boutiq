@@ -1,6 +1,7 @@
-<script>		import { goto } from '$app/navigation';
+<script>
+	import { goto } from '$app/navigation';
 
-	let { id, name, img_url, rating, raters, notes, price } = $props();
+	let { id, name, img_url, rating, raters, notes, price, discount } = $props();
 </script>
 
 <div
@@ -8,9 +9,11 @@
 >
 	<div class="absolute top-2 right-2 z-10 flex items-center justify-center gap-2">
 		<!-- add to favorite and features -->
-		<div class="flex h-4.5 items-center justify-center rounded-sm bg-[#E5EEFF] px-2 py-0.5">
-			<p class="text-sm font-medium text-[#1F66F0]">note</p>
-		</div>
+		{#if discount > 0}
+			<div class="flex h-4.5 items-center justify-center rounded-sm bg-[#E5EEFF] px-2 py-0.5">
+				<p class="text-sm font-medium text-[#1F66F0]">Promo</p>
+			</div>
+		{/if}
 		<button
 			class="relative flex h-5 w-5 items-center justify-center rounded-full bg-white shadow-md active:scale-90"
 		>
@@ -21,12 +24,17 @@
 			/>
 		</button>
 	</div>
-	<div class="flex h-42.5 w-full items-end justify-center">
-		<img src={img_url??"/placeholder.svg"} onerror={(e)=>{
-			e.currentTarget.src="/placeholder.svg"
-		}} alt="" class="h-33 w-37 object-cover" />
+	<div class="flex h-fit max-h-7/10 w-full items-end justify-center">
+		<img
+			src={img_url ?? '/placeholder.svg'}
+			onerror={(e) => {
+				e.currentTarget.src = '/placeholder.svg';
+			}}
+			alt=""
+			class="h-full w-full object-cover"
+		/>
 	</div>
-	<div class="flex w-full flex-col items-start justify-between gap-2.5 p-2">
+	<div class="flex h-fit w-full flex-col items-start justify-between gap-2.5 p-2">
 		<div class="flex flex-col items-start justify-start gap-1">
 			<!-- category -->
 			<!-- <p class="text-[10px] font-medium tracking-[0.2em] text-black uppercase">JEANS bla allllll</p> -->
@@ -51,8 +59,17 @@
 				<span class="text-[12px] text-[#878787]">(100)</span>
 			</div>
 		</div>
-		<p class="text-[10px] font-medium text-black">
-			<span class="text-[8px] font-bold text-black">{price} </span> DZD
-		</p>
+		{#if discount > 0}
+			<p class="text-[10px] font-medium text-black">
+				<span class="text-lg leading-4 font-bold text-red-500 line-through decoration-red-500"
+					>{price}
+				</span><span class="text-green-300 text-xl leading-4 pl-2">
+					{(parseFloat(1 - parseInt(discount) / 100) * price).toFixed(2)}</span
+				> DZD
+			</p>{:else}
+			<p class="text-[10px] font-medium text-black">
+				<span class="text-lg leading-4 font-bold text-black">{price} </span> DZD
+			</p>
+		{/if}
 	</div>
 </div>

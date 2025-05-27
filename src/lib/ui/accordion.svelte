@@ -20,7 +20,7 @@
 		}}
 		class="flex h-16 w-full cursor-pointer items-center justify-between py-6 text-slate-800"
 	>
-		<span class="text-lg text-left font-medium text-wrap text-black">{question}</span>
+		<span class="text-left text-lg font-medium text-wrap text-black">{question}</span>
 		<span class="text-slate-800 transition-transform duration-300">
 			{#if open}
 				<svg

@@ -4,10 +4,28 @@
 	import Card from '$lib/category_card.svelte';
 	import Product from '$lib/product.svelte';
 	import Accordion from '$lib/ui/accordion.svelte';
+	import Category from '$lib/rows/category.svelte';
+	import { supabase } from '$lib/index.js';
+	import { error } from '@sveltejs/kit';
+	let { data } = $props();
+	// fetching categories
+	let categories = $state();
+	$effect(async () => {
+		const { data, error } = await supabase.from('categories').select('id,name,image_url');
+		categories = data.slice(0, 6);
+	});
+	// fetching products
+	let products = $state();
+	$effect(async () => {
+		const { data, error } = await supabase
+			.from('products')
+			.select('name,selling_price,discount,img_url');
+		products = data;
+	});
 	let scrollable;
 </script>
 
-<Nav />
+<Nav userdata={data.user ?? null} />
 <div class="flex h-120 w-full items-center justify-center">
 	<div class="flex h-95 w-256 items-center justify-between rounded-3xl bg-[#f4f4f4]">
 		<div class="flex h-95 w-128 items-center justify-end">
@@ -122,16 +140,14 @@
 	</div>
 </div>
 <div class="flex h-88.5 w-full flex-col items-center justify-center gap-10">
-	<div class="flex h-9 w-256 items-center justify-start">
+	<div class="flex h-9 w-256 items-center justify-between">
 		<p class="text-3xl font-bold text-black">Our categories</p>
+		<a href="/categories" class="text-blue">see all...</a>
 	</div>
 	<div class="flex h-50 w-256 items-center gap-6">
-		<Card />
-		<Card />
-		<Card />
-		<Card />
-		<Card />
-		<Card />
+		{#each categories as category}
+			<Card name={category.name} img_url={category.image_url} id={category.id} />
+		{/each}
 	</div>
 </div>
 <div class="mb-5 flex h-fit w-full flex-col items-center justify-center gap-5">
@@ -183,17 +199,9 @@
 			class="scrollbar-hide flex h-90 w-250 items-center gap-2 overflow-x-auto px-2 whitespace-nowrap"
 			style="scrollbar-width: none;"
 		>
-			<Product />
-			<Product />
-			<Product />
-			<Product />
-			<Product />
-			<Product />
-			<Product />
-			<Product />
-			<Product />
-			<Product />
-			<Product />
+			{#each products as product}
+				<Product name={product.name} price={product.selling_price} img_url={product.img_url} />
+			{/each}
 		</div>
 		<!-- svelte-ignore a11y_consider_explicit_label -->
 		<div class="flex h-10 w-10 items-center justify-end">
@@ -236,7 +244,7 @@
 				<p class="text-sm text-[#222222]">
 					We are a fashion marketplace that connects you with the best brands and products.
 				</p>
-				<div><Bluebtn content={'About us'} /></div>
+				<div><Bluebtn content={'About us'} url={'/about'} /></div>
 			</div>
 			<img src="image.png" class="h-60 w-60 object-cover" alt="" />
 		</div>
@@ -266,7 +274,7 @@
 	</div>
 </section>
 <!-- footer section -->
-<footer class="flex h-fit w-full flex-col items-center gap-6 bg-white  py-3 pt-12 pb-12 px-20">
+<footer class="flex h-fit w-full flex-col items-center gap-6 bg-white px-20 py-3 pt-12 pb-12">
 	<!-- links -->
 	<div class="flex h-fit max-w-256 flex-wrap items-start gap-6 lg:w-256 lg:flex-nowrap">
 		<div class="flex h-44 w-full flex-col items-start justify-between">

@@ -75,7 +75,7 @@
 	>
 		<ul class="flex flex-col items-start justify-between gap-5">
 			<li
-				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black  hover:[&_svg]:stroke-black"
+				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black hover:[&_svg]:stroke-black"
 			>
 				<div class="flex items-center justify-start gap-2">
 					<svg
@@ -104,7 +104,7 @@
 				</div>
 			</li>
 			<li
-				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black  hover:[&_svg]:stroke-black"
+				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black hover:[&_svg]:stroke-black"
 			>
 				<div class="flex items-center justify-start gap-2">
 					<svg
@@ -137,7 +137,7 @@
 				</div>
 			</li>
 			<li
-				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black  hover:[&_svg]:stroke-black"
+				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black hover:[&_svg]:stroke-black"
 			>
 				<div class="flex items-center justify-start gap-2">
 					<svg
@@ -170,7 +170,7 @@
 				</div>
 			</li>
 			<li
-				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black  hover:[&_svg]:stroke-black"
+				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black hover:[&_svg]:stroke-black"
 			>
 				<div class="flex items-center justify-start gap-2">
 					<svg
@@ -200,7 +200,7 @@
 				</div>
 			</li>
 			<li
-				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black  hover:[&_svg]:stroke-black"
+				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black hover:[&_svg]:stroke-black"
 			>
 				<div class="flex items-center justify-start gap-2">
 					<svg
@@ -231,7 +231,7 @@
 				</div>
 			</li>
 			<li
-				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black  hover:[&_svg]:stroke-black"
+				class="flex w-full items-center justify-start gap-2 rounded-lg px-6 py-2 hover:bg-gray-200 hover:[&_a]:font-medium hover:[&_a]:text-black hover:[&_svg]:stroke-black"
 			>
 				<div class="flex items-center justify-start gap-2">
 					<svg

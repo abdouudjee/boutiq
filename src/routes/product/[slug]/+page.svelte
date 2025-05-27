@@ -244,7 +244,7 @@
 </main>
 <!-- cart counting -->
 <button
-	class="fixed scale-80 right-5 bottom-5 flex size-20 cursor-pointer items-center justify-center rounded-full bg-[#1f66f0] active:scale-75"
+	class="fixed right-5 bottom-5 flex size-20 scale-80 cursor-pointer items-center justify-center rounded-full bg-[#1f66f0] active:scale-75"
 >
 	<div class="relative h-fit w-fit">
 		<svg

@@ -193,7 +193,7 @@
 <!-- edit category page  -->
 {#if edit_page}
 	<div
-		class="fixed inset-0 z-20 gap-5  flex min-h-screen w-screen flex-col items-center justify-start overflow-auto bg-white"
+		class="fixed inset-0 z-20 flex min-h-screen w-screen flex-col items-center justify-start gap-5 overflow-auto bg-white"
 	>
 		<!-- headers -->
 		<div

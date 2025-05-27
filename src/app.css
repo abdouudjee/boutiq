@@ -1,18 +1,17 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
-@theme
-{
-    --color-smoke:#f4f4f4;
-    --color-dark-liver:#4E4E4E;
-    --color-charcoal:#1E1E1E;
-    --color-gunmetal:#535557;
-    --color-white:#ffffff;
-    --color-blue:#1f66f0;
-    --color-iron-gray:#878787;
-    --color-black:#1E1E1E;
-    --color-gray:#E7E7E7;
-    --font-sans:'poppins', sans-serif;
+@theme {
+	--color-smoke: #f4f4f4;
+	--color-dark-liver: #4e4e4e;
+	--color-charcoal: #1e1e1e;
+	--color-gunmetal: #535557;
+	--color-white: #ffffff;
+	--color-blue: #1f66f0;
+	--color-iron-gray: #878787;
+	--color-black: #1e1e1e;
+	--color-gray: #e7e7e7;
+	--font-sans: 'poppins', sans-serif;
 }
 
 * {

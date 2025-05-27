@@ -23,7 +23,7 @@
 
 			<!-- svelte-ignore a11y_consider_explicit_label -->
 			<button
-				class="flex h-7 w-7 items-center justify-center rounded-lg border-1 border-green-300 hover:bg-green-200 active:scale-95 y-1"
+				class="y-1 flex h-7 w-7 items-center justify-center rounded-lg border-1 border-green-300 hover:bg-green-200 active:scale-95"
 				onclick={(e) => {
 					e.stopPropagation();
 					value = newvalue;
@@ -41,12 +41,12 @@
 					stroke-width="2"
 					stroke-linecap="round"
 					stroke-linejoin="round"
-					class="stroke-green-600 "><path d="M20 6 9 17l-5-5" /></svg
+					class="stroke-green-600"><path d="M20 6 9 17l-5-5" /></svg
 				></button
 			>
 			<!-- svelte-ignore a11y_consider_explicit_label -->
 			<button
-				class="flex h-7 w-7 items-center justify-center rounded-lg border-1 border-red-300 hover:bg-red-200 active:scale-95 y-1"
+				class="y-1 flex h-7 w-7 items-center justify-center rounded-lg border-1 border-red-300 hover:bg-red-200 active:scale-95"
 				onclick={(e) => {
 					e.stopPropagation();
 					input = false;
@@ -67,6 +67,6 @@
 			>
 		</div>
 	{:else}
-		{value=='N/A'?'-':value+' DZD'} 
+		{value == 'N/A' ? '-' : value + ' DZD'}
 	{/if}
 </td>

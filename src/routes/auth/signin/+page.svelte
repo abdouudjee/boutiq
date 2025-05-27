@@ -1,5 +1,6 @@
 <form
-	action=""
+	method="POST"
+	action="?/singin"
 	class="flex h-full w-full flex-col items-start justify-start gap-4 rounded-md bg-white px-6 py-4 shadow-md"
 >
 	<div>
@@ -8,21 +9,21 @@
 	</div>
 
 	<div class="flex w-full flex-col gap-1">
-		<label for="" class="font-medium tracking-wide">Email</label>
+		<label for="email" class="font-medium tracking-wide">Email</label>
 		<input
 			type="text"
-			name=""
-			id=""
+			name="email"
+			id="email"
 			placeholder="eg. johndoe@gmail.com"
 			class="w-full rounded-md border-2 border-gray-300 px-2 py-1 ring-0 focus:border-gray-400 focus:outline-none"
 		/>
 	</div>
 	<div class="flex w-full flex-col gap-1">
-		<label for="" class="font-medium tracking-wider">Password</label>
+		<label for="password" class="font-medium tracking-wider">Password</label>
 		<input
 			type="password"
-			name=""
-			id=""
+			name="password"
+			id="password"
 			placeholder="eg. T9v$eX!aR3p@qL7z"
 			class="w-full rounded-md border-2 border-gray-300 px-2 py-1 ring-0 focus:border-gray-400 focus:outline-none"
 		/>
@@ -30,7 +31,7 @@
 			<a href="/" class="text-blue text-sm underline">Forgot password?</a>
 		</div>
 	</div>
-	<div class="flex w-full items-center justify-start gap-2">
+	<!-- <div class="flex w-full items-center justify-start gap-2">
 		<input
 			type="checkbox"
 			name=""
@@ -38,8 +39,9 @@
 			class="h-4 w-4 rounded-sm border-1 ring-black checked:bg-black"
 		/>
 		<label for="" class="font-medium">Remember me</label>
-	</div>
+	</div> -->
 	<button
+		type="submit"
 		class="flex w-full cursor-pointer items-center justify-center rounded-lg bg-black p-3 text-sm font-medium text-white hover:bg-gray-700 active:scale-95"
 		>Sign in</button
 	>

@@ -1,3 +1,8 @@
+<script>		import { goto } from '$app/navigation';
+
+	let { id, name, img_url, rating, raters, notes, price } = $props();
+</script>
+
 <div
 	class="relative flex h-80.5 w-60.5 shrink-0 flex-col items-center justify-start gap-2.5 rounded-xl border-1 border-[#EBEBEB] bg-white hover:[&_a]:text-[#1F66F0] hover:[&_a]:underline"
 >
@@ -17,15 +22,21 @@
 		</button>
 	</div>
 	<div class="flex h-42.5 w-full items-end justify-center">
-		<img src="/jeanspant.png" alt="" class="h-33 w-37 object-cover" />
+		<img src={img_url??"/placeholder.svg"} onerror={(e)=>{
+			e.currentTarget.src="/placeholder.svg"
+		}} alt="" class="h-33 w-37 object-cover" />
 	</div>
 	<div class="flex w-full flex-col items-start justify-between gap-2.5 p-2">
 		<div class="flex flex-col items-start justify-start gap-1">
 			<!-- category -->
-			<p class="text-[10px] font-medium tracking-[0.2em] text-black uppercase">JEANS bla allllll</p>
+			<!-- <p class="text-[10px] font-medium tracking-[0.2em] text-black uppercase">JEANS bla allllll</p> -->
 			<!-- product name -->
-			<a href="/" class="text-base font-medium text-wrap text-black"
-				>Classic High-Waist Skinny Jean</a
+			<a
+				href="/"
+				onclick={() => {
+					goto(`/product/${id}`);
+				}}
+				class="text-base font-medium text-wrap text-black">{name}</a
 			>
 			<div class="flex items-center justify-start gap-1">
 				<!-- rating -->
@@ -41,7 +52,7 @@
 			</div>
 		</div>
 		<p class="text-[10px] font-medium text-black">
-			<span class="text-[18px] font-bold text-black">1999.00 </span> DZD
+			<span class="text-[8px] font-bold text-black">{price} </span> DZD
 		</p>
 	</div>
 </div>

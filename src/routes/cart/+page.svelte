@@ -104,7 +104,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="flex items-center font-medium justify-end gap-2 text-lg">
+		<div class="flex items-center justify-end gap-2 text-lg font-medium">
 			<button
 				class="flex cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 hover:bg-gray-200"
 				>Continue Shopping</button

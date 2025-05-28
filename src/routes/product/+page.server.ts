@@ -9,5 +9,11 @@ export async function load({ url }) {
         ).select("*").neq("discount", "0");
         products = data;
     }
+    else{
+        const { data, error: supabaseerror } = await supabase.from(
+            "products",
+        ).select("*").neq("", "");
+        products = data;
+    }
     return { products };
 }

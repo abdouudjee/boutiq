@@ -1,9 +1,28 @@
+<script>
+	import { onMount } from 'svelte';
+
+	let { data } = $props();
+	let product = $state(data.product);
+	let def = $state(data.category.definition);
+	let vars = $state(data.variants);
+	onMount(() => {
+		let keys = Object.keys(vars[0].specific_attributes);
+		keys.forEach((key) => {
+			const x = document.getElementById('def-' + key);
+			if (x) {
+				x.innerHTML = '' + key + ' : ' + vars[0].specific_attributes[key];
+			}
+			console.log(x);
+		});
+	});
+</script>
+
 <div class="bg-smoke flex h-15 w-full items-center pl-20">
 	<p class="flex items-center gap-3 font-medium text-[#505050]">
 		<span class="cursor-pointer hover:text-[#1f66f0]">Home</span> &#10095;
-		<span class="cursor-pointer hover:text-[#1f66f0]">Jeans</span>
+		<span class="cursor-pointer hover:text-[#1f66f0]">{data.category.name}</span>
 		&#10095;
-		<span class="text-wrap overflow-ellipsis text-[#1e1e1e]">some crappy name for the product</span>
+		<span class="text-wrap overflow-ellipsis text-[#1e1e1e]">{product.name}</span>
 	</p>
 </div>
 <main class="flex flex-wrap items-start justify-center gap-5 px-5 py-10">
@@ -19,33 +38,51 @@
 		<!-- product images -->
 		<div class="grid w-126 grid-cols-3 grid-rows-3 gap-0.5">
 			<img
-				src={'/placeholder.svg'}
+				src={product.img_url[0] ?? '/placeholder.svg'}
+				onerror={(e) => {
+					e.currentTarget.src = '/placeholder.svg';
+				}}
 				alt=""
 				class="border-smoke col-span-2 row-span-2 h-full w-full rounded-xl border-2 bg-white"
 			/>
 			<img
-				src={'/placeholder.svg'}
+				src={product.img_url[1] ?? '/placeholder.svg'}
 				alt=""
+				onerror={(e) => {
+					e.currentTarget.src = '/placeholder.svg';
+				}}
 				class="h-full w-full rounded-lg border-2 border-gray-200 object-cover"
 			/>
 			<img
-				src={'/placeholder.svg'}
+				src={product.img_url[2] ?? '/placeholder.svg'}
 				alt=""
+				onerror={(e) => {
+					e.currentTarget.src = '/placeholder.svg';
+				}}
 				class="h-full w-full rounded-lg border-2 border-gray-200 object-cover"
 			/>
 			<img
-				src={'/placeholder.svg'}
+				src={product.img_url[3] ?? '/placeholder.svg'}
 				alt=""
+				onerror={(e) => {
+					e.currentTarget.src = '/placeholder.svg';
+				}}
 				class="h-full w-full rounded-lg border-2 border-gray-200 object-cover"
 			/>
 			<img
-				src={'/placeholder.svg'}
+				src={product.img_url[4] ?? '/placeholder.svg'}
 				alt=""
+				onerror={(e) => {
+					e.currentTarget.src = '/placeholder.svg';
+				}}
 				class="h-full w-full rounded-lg border-2 border-gray-200 object-cover"
 			/>
 			<img
-				src={'/placeholder.svg'}
+				src={product.img_url[5] ?? '/placeholder.svg'}
 				alt=""
+				onerror={(e) => {
+					e.currentTarget.src = '/placeholder.svg';
+				}}
 				class="h-full w-full rounded-lg border-2 border-gray-200 object-cover"
 			/>
 		</div>
@@ -54,7 +91,7 @@
 	<div class="flex flex-col items-start gap-3 xl:w-1/2">
 		<!--basic info -->
 		<div class="flex flex-col items-start gap-3">
-			<p class="text-3xl font-semibold text-black">some crappy name for the product</p>
+			<p class="text-3xl font-semibold text-black">{product.name}</p>
 			<div class="flex items-center gap-4">
 				<div class="flex items-center justify-start gap-1">
 					<!-- rating -->
@@ -106,12 +143,14 @@
 				</button>
 			</div>
 			<!-- price -->
-			<p class="text-3xl font-medium">15555.00 Dzd</p>
+			<p class="text-3xl font-medium">{product.selling_price} Dzd</p>
 			<!-- tags -->
 			<div class="flex items-center gap-3">
-				<div class="flex items-center justify-center rounded-full bg-[#E5EEFF] px-2 py-1">
-					<p class="text-sm font-medium text-[#1F66F0]">In stock</p>
-				</div>
+				{#if product.initial_stock > 0}
+					<div class="flex items-center justify-center rounded-full bg-[#E5EEFF] px-2 py-1">
+						<p class="text-sm font-medium text-[#1F66F0]">In stock</p>
+					</div>
+				{/if}
 
 				<div class="flex items-center justify-center rounded-full bg-[#E5EEFF] px-2 py-1">
 					<p class="text-sm font-medium text-[#1F66F0]">Free shipping</p>
@@ -123,81 +162,19 @@
 		<!-- description -->
 		<div>
 			<p class="max-w-200 text-justify text-slate-600">
-				High quality jeans with ... Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-				Cupiditate similique reprehenderit, voluptatibus reiciendis nisi nulla ab voluptates
-				temporibus tempora sequi corrupti! A, ad culpa minima quos illo optio omnis repudiandae.
-				Lorem, ipsum dolor sit amet consectetur adipisicing elit. Impedit voluptas expedita tempore
-				rerum eum? Architecto, quis possimus quaerat ipsa a mollitia eveniet eaque repellendus
-				consequatur nam exercitationem, modi officiis. Ipsum.
+				{product.description}
 			</p>
 		</div>
 		<!-- line -->
 		<div class="h-0.5 w-full rounded-full bg-gray-300"></div>
 		<!-- selected values -->
-		<div class="flex flex-wrap items-start gap-5">
+		<div class="flex flex-col flex-wrap items-start gap-5">
 			<!-- radio group for each field -->
-			{#each [1, 2, 3]}
+			{#each def as d}
 				<!-- radio group div  -->
-				<div class="flex flex-col items-start gap-3">
-					<p class="text-xl font-medium">Color :</p>
-					<div class="flex items-center gap-5">
-						<!-- choice -->
-						<div class="flex items-center gap-2 rounded-xl border-2 border-gray-300 p-2">
-							<input
-								type="radio"
-								name="color"
-								value="black"
-								class="cursor-pointer ring-0 outline-0"
-							/>
-							<span>Black</span>
-						</div>
-						<div class="flex items-center gap-2 rounded-xl border-2 border-gray-300 p-2">
-							<input
-								type="radio"
-								name="color"
-								value="red"
-								class="cursor-pointer ring-0 outline-0"
-							/>
-							<span>Red</span>
-						</div>
-						<div class="flex items-center gap-2 rounded-xl border-2 border-gray-300 p-2">
-							<input
-								type="radio"
-								name="color"
-								value="purple"
-								class="cursor-pointer ring-0 outline-0"
-							/>
-							<span>Purple</span>
-						</div>
-						<div class="flex items-center gap-2 rounded-xl border-2 border-gray-300 p-2">
-							<input
-								type="radio"
-								name="color"
-								value="purple"
-								class="cursor-pointer ring-0 outline-0"
-							/>
-							<span>Purple</span>
-						</div>
-						<div class="flex items-center gap-2 rounded-xl border-2 border-gray-300 p-2">
-							<input
-								type="radio"
-								name="color"
-								value="purple"
-								class="cursor-pointer ring-0 outline-0"
-							/>
-							<span>Purple</span>
-						</div>
-						<div class="flex items-center gap-2 rounded-xl border-2 border-gray-300 p-2">
-							<input
-								type="radio"
-								name="color"
-								value="purple"
-								class="cursor-pointer ring-0 outline-0"
-							/>
-							<span>Purple</span>
-						</div>
-					</div>
-				</div>
+				<p id={'def-' + d.name}>
+					{d.name} :
+				</p>
 			{/each}
 		</div>
 		<!-- add to cart , wishlist buttons -->

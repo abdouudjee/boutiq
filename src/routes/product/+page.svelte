@@ -1,7 +1,6 @@
 <script>
 	import Product from '$lib/product.svelte';
 	let { data } = $props();
-	console.table(data.products);
 </script>
 
 <div class="bg-smoke flex h-15 w-full items-center border-b-2 border-b-[#c3c0c0] pl-20">
@@ -19,12 +18,23 @@
 <div class="w-full px-13 py-5">
 	<div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-3">
 		{#each data.products as item}
-			<Product id={item.id} img_url={item.img_url} name={item.name} price={item.selling_price} discount={item.discount} />
+			<Product
+				id={item.id}
+				img_url={item.img_url}
+				name={item.name}
+				price={item.selling_price}
+				discount={item.discount}
+			/>
 		{:else}
-			<div class="col-span-full flex h-100 w-full items-center justify-center">
+			<div class="col-span-full gap-4 flex h-100 w-full flex-col items-center justify-center">
 				<p class="text-center text-2xl font-medium text-gray-400">
-					no items saved yet, any saved items will appear here.
+					no products found try to refrech the page
 				</p>
+				<button class="py-2 px-4 text-base underline border-2 rounded-xl "
+					onclick={() => {
+						location.reload();
+					}}>refrech</button
+				>
 			</div>
 		{/each}
 	</div>

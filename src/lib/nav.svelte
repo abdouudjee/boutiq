@@ -122,12 +122,14 @@
 					>Product</a
 				>
 				<!-- svelte-ignore a11y_consider_explicit_label -->
-				<a href="/product?tag=newArrival" class="text-iron-gray flex h-4 items-center px-2.5 text-lg outline-none"
-					>New Arrival</a
+				<a
+					href="/product?tag=newArrival"
+					class="text-iron-gray flex h-4 items-center px-2.5 text-lg outline-none">New Arrival</a
 				>
 				<!-- svelte-ignore a11y_consider_explicit_label -->
-				<a href="/" class="text-iron-gray flex h-4 items-center px-2.5 text-lg outline-none"
-					>Promo</a
+				<a
+					href="/product?tag=promo"
+					class="text-iron-gray flex h-4 items-center px-2.5 text-lg outline-none">Promo</a
 				>
 			</div>
 		</div>
@@ -160,8 +162,12 @@
 
 			<div class="flex h-9 items-center gap-5.5">
 				{#if userdata === null}
-					<button class="px-4 py-2 border-2 rounded-lg font-medium text-lg text-black bg-white">sign in</button>
-					<button class="px-4 py-2 border-2 rounded-lg font-medium text-lg text-white bg-black">sign up</button>
+					<button class="rounded-lg border-2 bg-white px-4 py-2 text-lg font-medium text-black"
+						>sign in</button
+					>
+					<button class="rounded-lg border-2 bg-black px-4 py-2 text-lg font-medium text-white"
+						>sign up</button
+					>
 				{:else}
 					<div class="flex h-9 items-end gap-2.5">
 						<div class="flex h-7.5 w-7.5 items-center justify-center pb-2">
@@ -216,8 +222,12 @@
 						</div>
 					</div>
 					<div>
-						<p class="text-gunmetal pt-1.5 text-[13px] leading-3 font-medium">{userdata.user_metadata.fullname}</p>
-						<p class=" text-charcoal text-gl font-medium" title={userdata.user_metadata.email}>{userdata.user_metadata.email.slice(0,20)}</p>
+						<p class="text-gunmetal pt-1.5 text-[13px] leading-3 font-medium">
+							{userdata.user_metadata.fullname}
+						</p>
+						<p class=" text-charcoal text-gl font-medium" title={userdata.user_metadata.email}>
+							{userdata.user_metadata.email.slice(0, 20)}
+						</p>
 					</div>
 				{/if}
 			</div>

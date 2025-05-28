@@ -40,9 +40,9 @@
 			<!-- <p class="text-[10px] font-medium tracking-[0.2em] text-black uppercase">JEANS bla allllll</p> -->
 			<!-- product name -->
 			<a
-				href="/"
+				href={"/product/"+name}
 				onclick={() => {
-					goto(`/product/${id}`);
+					goto(`/product/${name}`);
 				}}
 				class="text-base font-medium text-wrap text-black">{name}</a
 			>

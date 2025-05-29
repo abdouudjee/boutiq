@@ -1,5 +1,8 @@
 <script>
 	import Product from '$lib/product.svelte';
+	let { data } = $props();
+	let prods = $state(data.products);
+	let category = $state(data.category);
 	let discounted_only = $state();
 	let new_arrival_only = $state();
 	let plus_4_stars = $state();
@@ -17,8 +20,8 @@
 	</p>
 </div>
 <div class="bg-smoke flex flex-col gap-2 py-10 pl-20">
-	<p class="text-3xl font-bold text-black">crappy name</p>
-	<p class="text-lg font-medium text-gray-400">Discover our collection of crappy name</p>
+	<p class="text-3xl font-bold text-black">{category.name}</p>
+	<p class="text-lg font-medium text-gray-400">{category.description}</p>
 </div>
 <!-- filters bar -->
 <div class="flex h-fit w-full items-center justify-start gap-5 px-4 py-2">
@@ -149,12 +152,12 @@
 <!-- list of products-->
 <div class="w-full px-13 py-5">
 	<div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-3">
-		{#each [1, 2, 3, 4, 5, 6, 6, 7, 8, 9, 0, 0, 0, 0] as item}
-			<Product />
+		{#each prods as item}
+			<Product name={item.name} img_url={item.img_url[0]} discount={item.discount} price={item.selling_price}/>
 		{:else}
 			<div class="col-span-full flex h-100 w-full items-center justify-center">
 				<p class="text-center text-2xl font-medium text-gray-400">
-					no items saved yet, any saved items will appear here.
+					there is no product in here. try remove some filters or refresh the page.
 				</p>
 			</div>
 		{/each}

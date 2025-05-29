@@ -1,5 +1,7 @@
 <script>
 	import Category from '$lib/ui/category.svelte';
+	let { data } = $props();
+	let categories = $state(data.categories);
 </script>
 
 <div class="bg-smoke flex h-15 w-full items-center border-b-2 border-b-[#c3c0c0] pl-20">
@@ -16,7 +18,7 @@
 </div>
 
 <div class="flex flex-wrap items-center justify-center gap-5 px-2 py-10">
-	{#each [1, 2, 3, 4, 5, 6, 7, 8]}
-		<Category />
+	{#each categories as category}
+		<Category category={{ name: category.name, image: category.image_url }} />
 	{/each}
 </div>

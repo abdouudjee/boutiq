@@ -7,7 +7,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="group relative h-70 w-90 cursor-pointer overflow-hidden rounded-xl"
+	class="group relative h-65 w-85 cursor-pointer overflow-hidden rounded-xl"
 	onclick={() => {
 		goto(`/categories/${category.name}`);
 	}}

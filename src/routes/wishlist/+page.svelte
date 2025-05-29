@@ -1,5 +1,8 @@
 <script>
 	import Product from '$lib/product.svelte';
+	let { data } = $props();
+	let products = $state(data.liked);
+	console.log(products);
 </script>
 
 <div class="bg-smoke flex h-15 w-full items-center border-b-2 border-b-[#c3c0c0] pl-20">
@@ -16,8 +19,13 @@
 
 <div class="w-full px-13 py-5">
 	<div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-3">
-		{#each [1, 2, 3, 4, 5, 6, 6, 7, 8, 9, 0, 0, 0, 0] as item}
-			<Product />
+		{#each products as item}
+			<Product
+				name={item.products.name}
+				isfav={true}
+				price={item.products.selling_price}
+				img_url={item.products.img_url[0]}
+			/>
 		{:else}
 			<div class="col-span-full flex h-100 w-full items-center justify-center">
 				<p class="text-center text-2xl font-medium text-gray-400">

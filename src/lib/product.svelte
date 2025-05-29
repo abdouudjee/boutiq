@@ -1,7 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 
-	let { id, name, img_url, rating, raters, notes, price, discount } = $props();
+	let { id, name, img_url, rating, raters, notes, price, discount, isfav = false } = $props();
 </script>
 
 <div
@@ -18,13 +18,13 @@
 			class="relative flex h-5 w-5 items-center justify-center rounded-full bg-white shadow-md active:scale-90"
 		>
 			<img
-				src="/favorite/removed.svg"
+				src="/favorite/{isfav?"added":"removed"}.svg"
 				alt=""
 				class="absolute top-[55%] left-[50%] size-4 -translate-x-1/2 -translate-y-1/2 transform"
 			/>
 		</button>
 	</div>
-	<div class="flex min-h-6/10 h-fit max-h-7/10 w-full items-end justify-center">
+	<div class="flex h-fit max-h-7/10 min-h-6/10 w-full items-end justify-center">
 		<img
 			src={img_url ?? '/placeholder.svg'}
 			onerror={(e) => {

@@ -1,6 +1,7 @@
 <script>
 	import { supabase } from '$lib/index.js';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	let { userdata = null } = $props();
 	let store_info = $state();
 	let url = $state();
@@ -162,10 +163,18 @@
 
 			<div class="flex h-9 items-center gap-5.5">
 				{#if userdata === null}
-					<button class="rounded-lg border-2 bg-white px-4 py-2 text-lg font-medium text-black"
+					<button
+						onclick={() => {
+							goto('/auth/signin');
+						}}
+						class="rounded-lg cursor-pointer border-2 bg-white px-4 py-2 text-lg font-medium text-black"
 						>sign in</button
 					>
-					<button class="rounded-lg border-2 bg-black px-4 py-2 text-lg font-medium text-white"
+					<button
+						onclick={() => {
+							goto('/auth/signup');
+						}}
+						class="cursor-pointer rounded-lg border-2 bg-black px-4 py-2 text-lg font-medium text-white"
 						>sign up</button
 					>
 				{:else}

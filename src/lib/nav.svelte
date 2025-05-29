@@ -2,6 +2,7 @@
 	import { supabase } from '$lib/index.js';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { getLength, getTotal } from '$lib/cart.js';
 	let { userdata = null } = $props();
 	let store_info = $state();
 	let url = $state();
@@ -167,7 +168,7 @@
 						onclick={() => {
 							goto('/auth/signin');
 						}}
-						class="rounded-lg cursor-pointer border-2 bg-white px-4 py-2 text-lg font-medium text-black"
+						class="cursor-pointer rounded-lg border-2 bg-white px-4 py-2 text-lg font-medium text-black"
 						>sign in</button
 					>
 					<button
@@ -178,7 +179,15 @@
 						>sign up</button
 					>
 				{:else}
-					<div class="flex h-9 items-end gap-2.5">
+					<!-- cart -->
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div
+						class="flex h-9 items-end gap-2.5"
+						onclick={() => {
+							goto('/cart');
+						}}
+					>
 						<div class="flex h-7.5 w-7.5 items-center justify-center pb-2">
 							<svg
 								class="h-7.5 w-7.5"
@@ -200,7 +209,7 @@
 						<div class="flex h-7.5 flex-col items-start justify-center pb-2">
 							<p class="text-gunmetal pt-1.5 text-[13px] leading-3 font-medium">Cart</p>
 							<p class=" text-charcoal text-[10px] font-normal">
-								<span class="text-base font-medium">100.00</span> DZD
+								<span class="text-base font-medium">{getTotal()}</span> DZD
 							</p>
 						</div>
 					</div>

@@ -24,14 +24,14 @@
 			/>
 		</button>
 	</div>
-	<div class="flex h-fit max-h-7/10 min-h-6/10 w-full items-end justify-center">
+	<div class="flex h-fit max-h-7/10 min-h-6/10 w-full items-end justify-center rounded-lg">
 		<img
 			src={img_url ?? '/placeholder.svg'}
 			onerror={(e) => {
 				e.currentTarget.src = '/placeholder.svg';
 			}}
 			alt=""
-			class="h-full w-full object-cover"
+			class="h-full w-full object-cover rounded-t-lg"
 		/>
 	</div>
 	<div class="flex h-fit w-full flex-col items-start justify-between gap-2.5 p-2">

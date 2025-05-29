@@ -21,7 +21,6 @@
 			.from('products')
 			.select('name,selling_price,discount,img_url');
 		products = data;
-		console.table(products);
 	});
 	let scrollable;
 </script>

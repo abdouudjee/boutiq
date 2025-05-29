@@ -2,7 +2,6 @@
 	import Product from '$lib/product.svelte';
 	let { data } = $props();
 	let products = $state(data.liked);
-	console.log(products);
 </script>
 
 <div class="bg-smoke flex h-15 w-full items-center border-b-2 border-b-[#c3c0c0] pl-20">

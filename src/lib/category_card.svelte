@@ -14,7 +14,10 @@
 		goto(`/categories/${id}`);
 	}}
 >
-	<span class="absolute top-2.5 text-xl font-bold text-black">{name}</span>
+	<span
+		class="absolute top-2.5 text-xl font-bold text-white mix-blend-plus-darker text-shadow-2xs text-shadow-black"
+		>{name}</span
+	>
 	<img
 		bind:this={image}
 		onerror={(e) => {

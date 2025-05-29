@@ -5,15 +5,16 @@
 	let product = $state(data.product);
 	let def = $state(data.category.definition);
 	let vars = $state(data.variants);
-	onMount(() => {
-		let keys = Object.keys(vars[0].specific_attributes);
+	let selected_var_index = $state(0);
+	$effect(() => {
+		let keys = Object.keys(vars[selected_var_index].specific_attributes);
 		keys.forEach((key) => {
 			const x = document.getElementById('def-' + key);
 			if (x) {
-				x.innerHTML = '' + key + ' : ' + vars[0].specific_attributes[key];
+				x.innerHTML = '' + key + ' : ' + vars[selected_var_index].specific_attributes[key];
 			}
-			console.log(x);
 		});
+		document.getElementById('var-'+selected_var_index).scrollIntoView({behavior:"smooth",block:"start"})
 	});
 </script>
 
@@ -29,14 +30,28 @@
 	<div class="flex items-start gap-3">
 		<!-- variants imgs -->
 		<div class="flex h-127 flex-col items-center gap-2 overflow-scroll">
-			<img src="/placeholder.svg" alt="" class="h-30 w-30 rounded-lg border-2 border-[#1f66f0]" />
-			<img src="/placeholder.svg" alt="" class="h-30 w-30 rounded-lg border-2 border-gray-300" />
-			<img src="/placeholder.svg" alt="" class="h-30 w-30 rounded-lg border-2 border-gray-300" />
-			<img src="/placeholder.svg" alt="" class="h-30 w-30 rounded-lg border-2 border-gray-300" />
-			<img src="/placeholder.svg" alt="" class="h-30 w-30 rounded-lg border-2 border-gray-300" />
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			{#each vars as variant, index}
+				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+				<img
+					id={'var-' + index}
+					src={variant.img_url ?? '/placeholder.svg'}
+					onerror={(e) => {
+						e.currentTarget.src = '/placeholder.svg';
+					}}
+					onclick={() => {
+						selected_var_index = index;
+					}}
+					alt=""
+					class={[
+						'h-30 w-30 rounded-lg border-2',
+						index == selected_var_index ? 'border-blue' : 'border-gray-300'
+					]}
+				/>
+			{/each}
 		</div>
 		<!-- product images -->
-		<div class="grid w-126 grid-cols-3 grid-rows-3 gap-0.5">
+		<div class="grid h-126 w-126 grid-cols-3 grid-rows-3 gap-0.5">
 			<img
 				src={product.img_url[0] ?? '/placeholder.svg'}
 				onerror={(e) => {
@@ -177,6 +192,29 @@
 				</p>
 			{/each}
 		</div>
+		<!-- line -->
+		<div class="h-0.5 w-full rounded-full bg-gray-300"></div>
+		{#if vars.length > 0}
+			<div class="flex flex-wrap items-center justify-start gap-2">
+				{#each vars as variant, i}
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div
+						class={[
+							'rounded-xl  border-2 px-2 py-1',
+							i == selected_var_index ? 'border-blue' : 'border-gray-300'
+						]}
+						onclick={() => {
+							selected_var_index = i;
+						}}
+					>
+						<p>{Object.values(variant.specific_attributes).join(' /')}</p>
+					</div>
+				{/each}
+			</div>
+			<!-- line -->
+			<div class="h-0.5 w-full rounded-full bg-gray-300"></div>
+		{/if}
 		<!-- add to cart , wishlist buttons -->
 		<div class="flex-row items-center gap-3 py-2">
 			<button

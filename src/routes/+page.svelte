@@ -21,6 +21,7 @@
 			.from('products')
 			.select('name,selling_price,discount,img_url');
 		products = data;
+		console.table(products);
 	});
 	let scrollable;
 </script>
@@ -200,7 +201,14 @@
 			style="scrollbar-width: none;"
 		>
 			{#each products as product}
-				<Product name={product.name} price={product.selling_price} img_url={product.img_url} />
+				{#if product.discount > 0}
+					<Product
+						name={product.name}
+						price={product.selling_price}
+						img_url={product.img_url[0]}
+						discount={product.discount}
+					/>
+				{/if}
 			{/each}
 		</div>
 		<!-- svelte-ignore a11y_consider_explicit_label -->

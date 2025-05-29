@@ -282,13 +282,16 @@ xl:grid-cols-4 xl:grid-rows-1"
 		</div>
 	</div>
 </div>
-<div class="flex h-fit w-full flex-wrap items-start justify-between gap-3">
-	<div class="h-115 w-full rounded-2xl border-2 border-gray-300 p-5 xl:w-210">
+<!-- charts -->
+<div class="flex h-fit w-full flex-nowrap items-start justify-between gap-3">
+	<div class="h-115 w-full rounded-2xl border-2 border-gray-300 p-5 lg:w-210">
 		{#if revenues.length}
 			<canvas use:bars={[...revenues]}></canvas>
 		{/if}
 	</div>
-	<div class="size-115 rounded-2xl border-2 border-gray-300 p-5">
+	<div
+		class="flex size-116 flex-col items-center justify-between rounded-2xl border-2 border-gray-300 p-8"
+	>
 		{#if cats.length}
 			<canvas
 				use:pie={{
@@ -297,6 +300,7 @@ xl:grid-cols-4 xl:grid-rows-1"
 				}}
 			></canvas>
 		{/if}
+		<p class="text-xl font-medium ">categories Distribution chart</p>
 	</div>
 </div>
 <div class="flex w-full flex-wrap items-start justify-start gap-2 py-4 xl:flex-nowrap">
@@ -314,7 +318,9 @@ xl:grid-cols-4 xl:grid-rows-1"
 						</div>
 						<div class="flex flex-col items-start justify-center gap-1">
 							<p class="text-base leading-4 font-medium text-black">{order.person}</p>
-							<p class="leading-4 text-gray-400">{order.email}</p>
+							<p class="leading-4 text-gray-400" title={order.email}>
+								{('' + order.email).slice(0, 29)}
+							</p>
 						</div>
 					</div>
 					<p class="text-lg font-semibold">{order.total_price} dzd</p>

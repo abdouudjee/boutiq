@@ -24,7 +24,7 @@
 			/>
 		</button>
 	</div>
-	<div class="flex h-fit max-h-7/10 w-full items-end justify-center">
+	<div class="flex min-h-6/10 h-fit max-h-7/10 w-full items-end justify-center">
 		<img
 			src={img_url ?? '/placeholder.svg'}
 			onerror={(e) => {
@@ -40,7 +40,7 @@
 			<!-- <p class="text-[10px] font-medium tracking-[0.2em] text-black uppercase">JEANS bla allllll</p> -->
 			<!-- product name -->
 			<a
-				href={"/product/"+name}
+				href={'/product/' + name}
 				onclick={() => {
 					goto(`/product/${name}`);
 				}}
@@ -63,10 +63,12 @@
 			<p class="text-[10px] font-medium text-black">
 				<span class="text-lg leading-4 font-bold text-red-500 line-through decoration-red-500"
 					>{price}
-				</span><span class="text-green-300 text-xl leading-4 pl-2">
+				</span>
+				<span class="pl-2 text-xl leading-4 text-green-300">
 					{(parseFloat(1 - parseInt(discount) / 100) * price).toFixed(2)}</span
 				> DZD
-			</p>{:else}
+			</p>
+		{:else}
 			<p class="text-[10px] font-medium text-black">
 				<span class="text-lg leading-4 font-bold text-black">{price} </span> DZD
 			</p>

@@ -20,7 +20,7 @@
 		{#each data.products as item}
 			<Product
 				id={item.id}
-				img_url={item.img_url}
+				img_url={item.img_url[0]}
 				name={item.name}
 				price={item.selling_price}
 				discount={item.discount}

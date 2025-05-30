@@ -28,7 +28,7 @@
 				return acc;
 			}, {});
 			Customers_stats = [counts.new ?? 0, counts.active ?? 0, counts.inactive ?? 0];
-			active_customers_count = counts.active + counts.new;
+			active_customers_count = counts.active??0 + counts.new??0;
 		}
 	});
 	// products counting

@@ -93,23 +93,13 @@ export function bars(node, data) {
 export function pie(node, data) {
 	$effect(() => {
 		let pie = new Chart(node, {
-			type: 'pie',
+			type: 'doughnut',
 			data: {
 				labels: data.labels,
 				datasets: [
 					{
 						data: data.data,
-						backgroundColor: [
-							'#FF6B6B',
-							'#4ECDC4',
-							'#FFD93D',
-							'#1A535C',
-							'#FF9F1C',
-							'#5C4D7D',
-							'#00A896',
-							'#9D4EDD',
-							'#FFB5E8'
-						]
+						backgroundColor: ['#ecece5', '#3a4f99', '#6299d0', '#b2cee2', '#d1d871', '#13233d']
 					}
 				]
 			},
@@ -150,7 +140,7 @@ export function pie(node, data) {
 							return label;
 						},
 						font: {
-							size: 18
+							size: 15
 						},
 						color: 'black'
 					}

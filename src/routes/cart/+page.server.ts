@@ -19,5 +19,6 @@ export async function load({ locals }) {
 
     return {
         cartItems: data,
+        clientId: id[0].id,
     };
 }

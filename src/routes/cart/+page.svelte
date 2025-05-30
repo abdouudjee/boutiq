@@ -1,7 +1,18 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { supabase } from '$lib/index.js';
+
 	let { data } = $props();
+	console.log(data.cartItems[0])
 	let items = $state(data.cartItems);
+	async function removeItem(prodId, varId, clientId) {
+		const { error } = await supabase
+			.from('cart')
+			.delete()
+			.eq('client_id', clientId)
+			.eq('variant_id', varId)
+			.eq('product_id', prodId);
+	}
 </script>
 
 <div class="bg-smoke flex h-15 w-full items-center border-b-2 border-b-[#c3c0c0] pl-20">
@@ -97,6 +108,9 @@
 								>
 								<!-- svelte-ignore a11y_consider_explicit_label -->
 								<button
+									onclick={() => {
+										removeItem(item.products.id,item.product_variants.id,data.clientId)
+									}}
 									class="flex items-center justify-center rounded-lg p-1 hover:cursor-pointer hover:bg-gray-100"
 									><svg
 										xmlns="http://www.w3.org/2000/svg"

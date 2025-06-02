@@ -14,6 +14,7 @@
 	}
 	async function removeAllItems(clientId) {
 		const { error } = await supabase.from('cart').delete().eq('client_id', clientId);
+		items = [];
 	}
 </script>
 
@@ -155,7 +156,7 @@
 				>
 			</div>
 		{:else}
-			<p class="pt-40 font-medium text-gray-500 text-3xl">no itmes added to your cart yet</p>
+			<p class="pt-40 text-3xl font-medium text-gray-500">no itmes added to your cart yet</p>
 		{/if}
 	</div>
 	<div class="w-full p-4">

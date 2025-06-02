@@ -11,7 +11,7 @@
 	id="img"
 	class="relative flex h-50 w-38.5 justify-center rounded-xl shadow-md"
 	onclick={() => {
-		goto(`/categories/${id}`);
+		goto(`/categories/${name}`);
 	}}
 >
 	<span

@@ -2,11 +2,14 @@
 	import { onMount } from 'svelte';
 	import { addItem, getLength } from '$lib/cart.js';
 	import { goto } from '$app/navigation';
+	import { supabase } from '$lib';
 	let { data } = $props();
+	let clientId = data.clientId;
 	let product = $state(data.product);
 	let def = $state(data.category.definition);
 	let vars = $state(data.variants);
 	let selected_var_index = $state(0);
+	let counter = $state(0);
 	$effect(() => {
 		let keys = Object.keys(vars[selected_var_index].specific_attributes);
 		keys.forEach((key) => {
@@ -18,6 +21,13 @@
 		document
 			.getElementById('var-' + selected_var_index)
 			.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	});
+	$effect(async () => {
+		const { count, error } = await supabase
+			.from('cart')
+			.select('*', { count: 'exact', head: 'true' })
+			.eq('client_id', clientId);
+		counter = count;
 	});
 </script>
 
@@ -221,12 +231,18 @@
 		<!-- add to cart , wishlist buttons -->
 		<div class="flex-row items-center gap-3 py-2">
 			<button
-				onclick={() => {
-					addItem({
-						productid: product.id,
-						variantid: vars[selected_var_index].id,
-						price: product.selling_price
-					});
+				onclick={async () => {
+					const { data, error } = await supabase
+						.from('cart')
+						.insert([
+							{
+								product_id: product.id,
+								variant_id: vars[selected_var_index].id,
+								client_id: clientId
+							}
+						])
+						.select();
+					counter++;
 				}}
 				class="ring-offset-background focus-visible:ring-ring [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 inline-flex h-13 cursor-pointer items-center justify-center gap-2 rounded-md bg-[#1f66f0] px-4 py-2 font-medium whitespace-nowrap text-white transition-colors hover:bg-[#1f66f0]/90 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-95 disabled:pointer-events-none disabled:opacity-50"
 			>
@@ -292,8 +308,6 @@
 			<path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12">
 			</path></svg
 		>
-		<span class="absolute top-3.5 left-4.5 w-6 text-center font-medium text-white"
-			>{getLength()}</span
-		>
+		<span class="absolute top-3.5 left-4.5 w-6 text-center font-medium text-white">{counter}</span>
 	</div>
 </button>

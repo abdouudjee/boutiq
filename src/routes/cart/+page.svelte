@@ -1,9 +1,10 @@
 <script>
-	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import { supabase } from '$lib/index.js';
 
 	let { data } = $props();
 	let items = $state(data.cartItems);
+	let client_id = $state(data.clientId);
 	async function removeItem(prodId, varId, clientId) {
 		const { error } = await supabase
 			.from('cart')
@@ -12,9 +13,57 @@
 			.eq('variant_id', varId)
 			.eq('product_id', prodId);
 	}
+	let wilaias = $state([]);
+	$effect(async () => {
+		const { data, error } = await supabase.from('wilayas').select('*');
+	});
 	async function removeAllItems(clientId) {
 		const { error } = await supabase.from('cart').delete().eq('client_id', clientId);
 		items = [];
+	}
+	let wilaia = $state(null);
+	let wilaia_id = $state(1);
+	let shipping_price = $state();
+	let address = $state(null);
+	let zipcode = $state(null);
+	let shippingCompany = $state(null);
+	let phone = $state(null);
+	let total = $state(0);
+	$effect(() => {
+		total = items.reduce((acc, curr) => {
+			return acc + curr.products.selling_price;
+		}, 0);
+	});
+	async function placeOrder() {
+		// adding new order
+		const { data: id, error: err } = await supabase
+			.from('orders')
+			.insert([
+				{
+					client_id: client_id,
+					total_price: total,
+					status_history: ['new'],
+					shipping_address: address,
+					wilaia_id: wilaia_id
+				}
+			])
+			.select('id');
+		// inserting purshased products
+		let to_insert = [];
+		items.forEach((item) => {
+			to_insert.push({
+				order_id: id[0].id,
+				product_id: item.product_id,
+				price_at_purchase_time: item.products.selling_price,
+				other_specs: item.product_variants.specific_attributes
+			});
+		});
+		const { data, error } = await supabase
+			.from('purchased_products')
+			.insert([...to_insert])
+			.select();
+		console.log(error);
+		removeAllItems(data.clientId);
 	}
 </script>
 
@@ -171,6 +220,7 @@
 					type="text"
 					name=""
 					id=""
+					bind:value={address}
 					placeholder="enter you address"
 					class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
 				/>
@@ -184,6 +234,7 @@
 						type="text"
 						name=""
 						id=""
+						bind:value={wilaia}
 						placeholder="Choose your wilaia"
 						class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
 					/>
@@ -194,6 +245,7 @@
 						type="text"
 						name=""
 						id=""
+						bind:value={zipcode}
 						placeholder="Enter your postal code"
 						class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
 					/>
@@ -207,6 +259,7 @@
 						type="number"
 						name=""
 						id=""
+						bind:value={phone}
 						placeholder="enter you phone number"
 						class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
 					/>
@@ -216,19 +269,24 @@
 					<label for="">Shipping with</label>
 					<input
 						type="text"
+						list="shipping"
 						name=""
+						bind:value={shippingCompany}
 						id=""
 						placeholder="choose a shipping company"
 						class="w-full rounded-md border-2 border-gray-300 px-2 py-1.5 ring-gray-500 focus:border-gray-400 focus:ring-2 focus:outline-none"
 					/>
+					<datalist id="shipping">
+						<!-- change this to each block -->
+						<option vlaue="yalidine">yalidine</option>
+						<option vlaue="norewest">norewest</option>
+					</datalist>
 				</div>
 			</div>
 			<!--submit and cancel buttons  -->
 			<div class="flex items-center justify-between">
 				<p class="px-2 text-2xl font-medium">
-					Total: {items.reduce((acc, curr) => {
-						return acc + curr.products.selling_price;
-					}, 0)} <span class=" text-lg font-medium text-gray-700"> Dzd</span>
+					Total: {total} <span class=" text-lg font-medium text-gray-700"> Dzd</span>
 				</p>
 
 				<div class="flex items-center justify-end gap-3 px-2 py-2">
@@ -237,6 +295,9 @@
 						>cancel</button
 					>
 					<button
+						onclick={() => {
+							placeOrder();
+						}}
 						class="flex items-center justify-center rounded-lg border-2 border-black bg-black px-4 py-2 text-lg font-medium text-white"
 					>
 						submit

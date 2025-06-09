@@ -44,10 +44,12 @@
 					total_price: total,
 					status_history: ['new'],
 					shipping_address: address,
-					wilaia_id: wilaia_id
+					wilaya_id: wilaia_id,
+					shipping_price:1000
 				}
 			])
 			.select('id');
+		console.log(err)
 		// inserting purshased products
 		let to_insert = [];
 		items.forEach((item) => {
@@ -55,7 +57,8 @@
 				order_id: id[0].id,
 				product_id: item.product_id,
 				price_at_purchase_time: item.products.selling_price,
-				other_specs: item.product_variants.specific_attributes
+				other_specs: item.product_variants.specific_attributes,
+				quantity:1
 			});
 		});
 		const { data, error } = await supabase
@@ -63,7 +66,7 @@
 			.insert([...to_insert])
 			.select();
 		console.log(error);
-		removeAllItems(data.clientId);
+		removeAllItems(client_id);
 	}
 </script>
 
